@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   FolderGit2, Award, Briefcase, Code2, FileUp, LogOut, 
-  Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle2, ShieldAlert, Sun, Moon
+  Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle2, ShieldAlert, Sun, Moon, User, Image, Sparkles
 } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
-import { mockProjects, mockSkills, mockExperiences, mockCertificates } from '../data/mockData'
+import { mockProjects, mockSkills, mockExperiences, mockCertificates, profileInfo } from '../data/mockData'
 
 const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState('projects')
+  const [activeTab, setActiveTab] = useState('hero')
   
   // Data States
   const [projects, setProjects] = useState([])
@@ -17,6 +17,18 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const [experiences, setExperiences] = useState([])
   const [certificates, setCertificates] = useState([])
   const [cvUrl, setCvUrl] = useState('')
+
+  // Hero / Profile State
+  const [heroForm, setHeroForm] = useState({
+    name: profileInfo.name,
+    subtitles: profileInfo.subtitles.join(', '),
+    bio: profileInfo.bio,
+    profile_image: '/assets/images/profile3.jpg',
+    github: 'https://github.com',
+    linkedin: 'https://linkedin.com',
+    instagram: 'https://instagram.com',
+    email: 'mailto:your-email@example.com'
+  })
 
   // UI Flow States
   const [loading, setLoading] = useState(true)
@@ -40,17 +52,31 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     try {
       if (isSupabaseConfigured && supabase) {
         // Load from Supabase
-        const [pData, sData, eData, cData] = await Promise.all([
+        const [pData, sData, eData, cData, profData] = await Promise.all([
           supabase.from('projects').select('*').order('created_at', { ascending: false }),
           supabase.from('skills').select('*').order('created_at', { ascending: true }),
           supabase.from('experiences').select('*').order('start_date', { ascending: false }),
-          supabase.from('certificates').select('*').order('created_at', { ascending: false })
+          supabase.from('certificates').select('*').order('created_at', { ascending: false }),
+          supabase.from('profile').select('*').single()
         ])
 
         if (pData.data) setProjects(pData.data)
         if (sData.data) setSkills(sData.data)
         if (eData.data) setExperiences(eData.data)
         if (cData.data) setCertificates(cData.data)
+        if (profData.data) {
+          const prof = profData.data
+          setHeroForm({
+            name: prof.name || profileInfo.name,
+            subtitles: Array.isArray(prof.subtitles) ? prof.subtitles.join(', ') : (prof.subtitles || profileInfo.subtitles.join(', ')),
+            bio: prof.bio || profileInfo.bio,
+            profile_image: prof.profile_image || '/assets/images/profile3.jpg',
+            github: prof.github || 'https://github.com',
+            linkedin: prof.linkedin || 'https://linkedin.com',
+            instagram: prof.instagram || 'https://instagram.com',
+            email: prof.email || 'mailto:your-email@example.com'
+          })
+        }
       } else {
         // Load from LocalStorage or Fallback Mock Data
         const localProjects = localStorage.getItem('db_projects')
@@ -58,18 +84,60 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
         const localExperiences = localStorage.getItem('db_experiences')
         const localCertificates = localStorage.getItem('db_certificates')
         const localCv = localStorage.getItem('db_cv')
+        const localProfile = localStorage.getItem('db_profile')
 
         setProjects(localProjects ? JSON.parse(localProjects) : mockProjects)
         setSkills(localSkills ? JSON.parse(localSkills) : mockSkills)
         setExperiences(localExperiences ? JSON.parse(localExperiences) : mockExperiences)
         setCertificates(localCertificates ? JSON.parse(localCertificates) : mockCertificates)
         setCvUrl(localCv || '/assets/cv.pdf')
+
+        if (localProfile) {
+          const parsed = JSON.parse(localProfile)
+          setHeroForm({
+            name: parsed.name || profileInfo.name,
+            subtitles: Array.isArray(parsed.subtitles) ? parsed.subtitles.join(', ') : (parsed.subtitles || profileInfo.subtitles.join(', ')),
+            bio: parsed.bio || profileInfo.bio,
+            profile_image: parsed.profile_image || '/assets/images/profile3.jpg',
+            github: parsed.github || 'https://github.com',
+            linkedin: parsed.linkedin || 'https://linkedin.com',
+            instagram: parsed.instagram || 'https://instagram.com',
+            email: parsed.email || 'mailto:your-email@example.com'
+          })
+        }
       }
     } catch (err) {
       showMsg('error', 'Error loading database files.')
       console.error(err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const saveHeroProfile = async (e) => {
+    e.preventDefault()
+    try {
+      const profileData = {
+        name: heroForm.name,
+        subtitles: heroForm.subtitles.split(',').map(s => s.trim()),
+        bio: heroForm.bio,
+        profile_image: heroForm.profile_image,
+        github: heroForm.github,
+        linkedin: heroForm.linkedin,
+        instagram: heroForm.instagram,
+        email: heroForm.email
+      }
+
+      if (isSupabaseConfigured && supabase) {
+        const { error } = await supabase.from('profile').upsert([{ id: 1, ...profileData }])
+        if (error) throw error
+        showMsg('success', 'Hero profile saved successfully to Supabase!')
+      } else {
+        localStorage.setItem('db_profile', JSON.stringify(profileData))
+        showMsg('success', 'Hero profile saved locally (Preview mode).')
+      }
+    } catch (err) {
+      showMsg('error', err.message || 'Failed to save hero profile.')
     }
   }
 
@@ -470,6 +538,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
           {/* Navigation Buttons */}
           <nav className="space-y-1">
             {[
+              { id: 'hero', label: 'Hero / Profile', icon: <User size={18} /> },
               { id: 'projects', label: 'Projects', icon: <FolderGit2 size={18} /> },
               { id: 'skills', label: 'Skills', icon: <Code2 size={18} /> },
               { id: 'experiences', label: 'Experiences', icon: <Briefcase size={18} /> },
@@ -537,6 +606,162 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
         ) : (
           <div className="space-y-8">
             
+            {/* ========================================================
+               HERO & PROFILE VIEW
+               ======================================================== */}
+            {activeTab === 'hero' && (
+              <div className="max-w-4xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm dark:shadow-none space-y-6">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                      <Sparkles className="text-blue-500" size={20} />
+                      Hero & Profile Manager
+                    </h3>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+                      Customize your main hero landing section, bio, roles, profile image, and social links.
+                    </p>
+                  </div>
+                </div>
+
+                <form onSubmit={saveHeroProfile} className="space-y-6">
+                  {/* Name & Roles */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                        Full Name
+                      </label>
+                      <input 
+                        type="text" 
+                        value={heroForm.name} 
+                        onChange={(e) => setHeroForm({...heroForm, name: e.target.value})}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                        placeholder="Natanael Ruswandi" 
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                        Subtitles / Animated Roles (comma separated)
+                      </label>
+                      <input 
+                        type="text" 
+                        value={heroForm.subtitles} 
+                        onChange={(e) => setHeroForm({...heroForm, subtitles: e.target.value})}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                        placeholder="AI Developer, Mobile Developer, Computer Vision Enthusiast" 
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Bio Description */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                      Bio / Short Introduction
+                    </label>
+                    <textarea 
+                      value={heroForm.bio} 
+                      onChange={(e) => setHeroForm({...heroForm, bio: e.target.value})}
+                      rows="3" 
+                      className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                      placeholder="Creative Developer & Designer..."
+                      required
+                    />
+                  </div>
+
+                  {/* Profile Picture */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                      Profile Picture
+                    </label>
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                      <div className="w-16 h-16 rounded-full border-2 border-blue-500 overflow-hidden flex-shrink-0 bg-slate-100 dark:bg-slate-800">
+                        <img 
+                          src={heroForm.profile_image || '/assets/images/profile3.jpg'} 
+                          alt="Preview" 
+                          className="w-full h-full object-cover" 
+                          onError={(e) => { e.target.src = '/assets/images/profile3.jpg' }}
+                        />
+                      </div>
+                      <div className="flex-1 w-full flex gap-2">
+                        <input 
+                          type="text" 
+                          value={heroForm.profile_image} 
+                          onChange={(e) => setHeroForm({...heroForm, profile_image: e.target.value})}
+                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                          placeholder="/assets/images/profile3.jpg or Image URL" 
+                        />
+                        <label className="px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors border border-slate-300 dark:border-slate-700">
+                          Upload Image
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            className="hidden" 
+                            onChange={(e) => handleFileUpload(e, 'profile', (url) => setHeroForm({...heroForm, profile_image: url}))}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Social Links */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200 dark:border-slate-800 pt-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">GitHub URL</label>
+                      <input 
+                        type="url" 
+                        value={heroForm.github} 
+                        onChange={(e) => setHeroForm({...heroForm, github: e.target.value})}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                        placeholder="https://github.com/username" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">LinkedIn URL</label>
+                      <input 
+                        type="url" 
+                        value={heroForm.linkedin} 
+                        onChange={(e) => setHeroForm({...heroForm, linkedin: e.target.value})}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                        placeholder="https://linkedin.com/in/username" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Instagram URL</label>
+                      <input 
+                        type="url" 
+                        value={heroForm.instagram} 
+                        onChange={(e) => setHeroForm({...heroForm, instagram: e.target.value})}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                        placeholder="https://instagram.com/username" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Email Contact</label>
+                      <input 
+                        type="text" 
+                        value={heroForm.email} 
+                        onChange={(e) => setHeroForm({...heroForm, email: e.target.value})}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                        placeholder="mailto:your-email@example.com" 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-4">
+                    <button 
+                      type="submit" 
+                      className="w-full sm:w-auto px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                    >
+                      <Save size={16} />
+                      Save Hero Profile
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
             {/* ========================================================
                PROJECTS VIEW
                ======================================================== */}

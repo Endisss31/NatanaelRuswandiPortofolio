@@ -2,9 +2,41 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Github, Linkedin, Instagram, Mail, FileDown, ArrowRight } from 'lucide-react'
 import { profileInfo } from '../data/mockData'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 
 const Hero = () => {
-  const words = profileInfo.subtitles
+  const [profile, setProfile] = useState(() => {
+    const local = localStorage.getItem('db_profile')
+    return local ? JSON.parse(local) : profileInfo
+  })
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        if (isSupabaseConfigured && supabase) {
+          const { data, error } = await supabase.from('profile').select('*').single()
+          if (!error && data) {
+            setProfile({
+              name: data.name || profileInfo.name,
+              subtitles: data.subtitles ? (Array.isArray(data.subtitles) ? data.subtitles : data.subtitles.split(',').map(s => s.trim())) : profileInfo.subtitles,
+              bio: data.bio || profileInfo.bio,
+              profile_image: data.profile_image || '/assets/images/profile3.jpg',
+              github: data.github || 'https://github.com',
+              linkedin: data.linkedin || 'https://linkedin.com',
+              instagram: data.instagram || 'https://instagram.com',
+              email: data.email || 'mailto:your-email@example.com',
+              cvUrl: data.cv_url || profileInfo.cvUrl || '/assets/cv.pdf'
+            })
+          }
+        }
+      } catch (err) {
+        console.error("Error loading hero profile:", err)
+      }
+    }
+    fetchProfile()
+  }, [])
+
+  const words = profile.subtitles || profileInfo.subtitles
   const [wordIndex, setWordIndex] = useState(0)
   const [currentText, setCurrentText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
@@ -12,7 +44,9 @@ const Hero = () => {
 
   useEffect(() => {
     let timer;
-    const fullWord = words[wordIndex]
+    const currentWordList = words && words.length > 0 ? words : profileInfo.subtitles
+    const safeIndex = wordIndex % currentWordList.length
+    const fullWord = currentWordList[safeIndex] || ''
 
     if (isDeleting) {
       timer = setTimeout(() => {
@@ -31,12 +65,12 @@ const Hero = () => {
       timer = setTimeout(() => setIsDeleting(true), 2000)
     } else if (isDeleting && currentText === '') {
       setIsDeleting(false)
-      setWordIndex((prev) => (prev + 1) % words.length)
+      setWordIndex((prev) => (prev + 1) % currentWordList.length)
       setSpeed(300) // Small pause before typing next word
     }
 
     return () => clearTimeout(timer)
-  }, [currentText, isDeleting, wordIndex])
+  }, [currentText, isDeleting, wordIndex, words])
 
   const scrollSection = (id) => {
     const el = document.getElementById(id)
@@ -63,11 +97,11 @@ const Hero = () => {
           <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">
             Hi, I'm <br className="hidden sm:inline" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">
-              {profileInfo.name}
+              {profile.name}
             </span>
           </h1>
 
-          <div className="h-12 flex items-center justify-center lg:justify-start text-xl sm:text-2xl text-slate-700 dark:text-slate-350 font-semibold mb-6">
+          <div className="h-12 flex items-center justify-center lg:justify-start text-xl sm:text-2xl text-slate-700 dark:text-slate-300 font-semibold mb-6">
             <span>Creative&nbsp;</span>
             <span className="text-blue-600 dark:text-blue-400 font-bold border-r-2 border-blue-500 pr-1 animate-pulse">
               {currentText || '\u00A0'}
@@ -75,7 +109,7 @@ const Hero = () => {
           </div>
 
           <p className="text-slate-650 dark:text-slate-400 text-base sm:text-lg max-w-lg mb-8 mx-auto lg:mx-0 leading-relaxed">
-            {profileInfo.bio}
+            {profile.bio}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center lg:justify-start mb-10">
@@ -87,7 +121,7 @@ const Hero = () => {
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
             <a 
-              href={profileInfo.cvUrl} 
+              href={profile.cvUrl || '/assets/cv.pdf'} 
               download
               className="px-8 py-3.5 rounded-full glass-panel hover:bg-slate-100 dark:hover:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200/60 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 font-semibold flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 duration-300 w-full sm:w-auto"
             >
@@ -99,10 +133,10 @@ const Hero = () => {
           {/* Social connections */}
           <div className="flex justify-center lg:justify-start gap-4 text-slate-500 dark:text-slate-400">
             {[
-              { icon: <Github size={20} />, link: "https://github.com", label: "Github" },
-              { icon: <Linkedin size={20} />, link: "https://linkedin.com", label: "LinkedIn" },
-              { icon: <Instagram size={20} />, link: "https://instagram.com", label: "Instagram" },
-              { icon: <Mail size={20} />, link: "mailto:your-email@example.com", label: "Email" }
+              { icon: <Github size={20} />, link: profile.github || "https://github.com", label: "Github" },
+              { icon: <Linkedin size={20} />, link: profile.linkedin || "https://linkedin.com", label: "LinkedIn" },
+              { icon: <Instagram size={20} />, link: profile.instagram || "https://instagram.com", label: "Instagram" },
+              { icon: <Mail size={20} />, link: profile.email || "mailto:your-email@example.com", label: "Email" }
             ].map((soc, idx) => (
               <a
                 key={idx}
@@ -110,7 +144,7 @@ const Hero = () => {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={soc.label}
-                className="p-3 rounded-full bg-white dark:bg-slate-900/50 hover:bg-blue-500/5 dark:hover:bg-blue-500/10 border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-blue-500/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300"
+                className="p-3 rounded-full bg-white/60 dark:bg-slate-900/50 hover:bg-blue-500/5 dark:hover:bg-blue-500/10 border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-blue-500/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300"
               >
                 {soc.icon}
               </a>
@@ -135,11 +169,11 @@ const Hero = () => {
             {/* Main Picture */}
             <div className="w-full h-full rounded-full border-4 border-slate-200 dark:border-white/5 overflow-hidden shadow-2xl relative z-10 bg-slate-100 dark:bg-slate-900">
               <img 
-                src="/assets/images/profile3.jpg" 
-                alt={profileInfo.name} 
+                src={profile.profile_image || profile.image_url || '/assets/images/profile3.jpg'} 
+                alt={profile.name} 
                 className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
                 onError={(e) => {
-                  e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80"
+                  e.target.src = "/assets/images/profile3.jpg"
                 }}
               />
             </div>
