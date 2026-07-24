@@ -95,23 +95,31 @@ function App() {
 
   // Manage login session
   useEffect(() => {
+    const mockUser = localStorage.getItem('mock_admin_session')
+
     if (isSupabaseConfigured && supabase) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        setSession(session)
+      supabase.auth.getSession().then(({ data: { session: s } }) => {
+        if (s) {
+          setSession(s)
+        } else if (mockUser) {
+          setSession({ user: { email: 'admin@portfolio.com' } })
+        }
         setLoading(false)
       })
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        setSession(session)
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+        if (s) {
+          setSession(s)
+        } else if (localStorage.getItem('mock_admin_session')) {
+          setSession({ user: { email: 'admin@portfolio.com' } })
+        }
         setLoading(false)
       })
 
       return () => subscription.unsubscribe()
     } else {
-      // Mock session check for preview mode
-      const mockUser = localStorage.getItem('mock_admin_session')
       if (mockUser) {
-        setSession({ user: { email: 'mockadmin@example.com' } })
+        setSession({ user: { email: 'admin@portfolio.com' } })
       }
       setLoading(false)
     }

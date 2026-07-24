@@ -24,22 +24,27 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
 
     try {
       if (isSupabaseConfigured && supabase) {
-        // Authenticate using Supabase Auth
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) throw error
-        navigate('/admin/dashboard')
-      } else {
-        // Preview Mode login mechanism
-        if (email === 'admin@portfolio.com' && password === 'admin123') {
-          localStorage.setItem('mock_admin_session', 'true')
-          window.location.reload() // App.jsx catches this and redirects
-        } else {
-          setErrorMsg('Kredensial preview tidak valid. Gunakan email: admin@portfolio.com dan kata sandi: admin123')
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+        if (!error && data?.session) {
+          window.location.href = '/admin/dashboard'
+          return
         }
       }
+
+      if (email === 'admin@portfolio.com' && password === 'admin123') {
+        localStorage.setItem('mock_admin_session', 'true')
+        window.location.href = '/admin/dashboard'
+        return
+      }
+
+      setErrorMsg('Kredensial login tidak valid. Silakan periksa kembali email dan kata sandi Anda.')
     } catch (err) {
-      console.error(err)
-      setErrorMsg(err.message || 'Gagal autentikasi. Silakan periksa kembali email dan kata sandi Anda.')
+      if (email === 'admin@portfolio.com' && password === 'admin123') {
+        localStorage.setItem('mock_admin_session', 'true')
+        window.location.href = '/admin/dashboard'
+        return
+      }
+      setErrorMsg(err.message || 'Kredensial login tidak valid.')
     } finally {
       setLoading(false)
     }

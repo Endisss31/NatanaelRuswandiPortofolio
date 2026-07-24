@@ -288,13 +288,13 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
   // Auth Logout trigger
   const handleLogout = async () => {
+    localStorage.removeItem('mock_admin_session')
     if (isSupabaseConfigured && supabase) {
-      await supabase.auth.signOut()
-    } else {
-      localStorage.removeItem('mock_admin_session')
+      try {
+        await supabase.auth.signOut()
+      } catch (e) {}
     }
-    navigate('/')
-    window.location.reload()
+    navigate('/admin/login')
   }
 
   /* ========================================================
