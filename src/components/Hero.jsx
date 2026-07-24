@@ -12,25 +12,53 @@ const Hero = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
+      let loadedProfile = null
+
       try {
         if (isSupabaseConfigured && supabase) {
-          const { data, error } = await supabase.from('profile').select('*').single()
-          if (!error && data) {
-            setProfile({
-              name: data.name || profileInfo.name,
-              subtitles: data.subtitles ? (Array.isArray(data.subtitles) ? data.subtitles : data.subtitles.split(',').map(s => s.trim())) : profileInfo.subtitles,
-              bio: data.bio || profileInfo.bio,
-              profile_image: data.profile_image || '/assets/images/profile3.jpg',
-              github: data.github || 'https://github.com',
-              linkedin: data.linkedin || 'https://linkedin.com',
-              instagram: data.instagram || 'https://instagram.com',
-              email: data.email || 'mailto:your-email@example.com',
-              cvUrl: data.cv_url || profileInfo.cvUrl || '/assets/cv.pdf'
-            })
+          const { data, error } = await supabase.from('profile').select('*').limit(1)
+          if (!error && data && data.length > 0) {
+            const row = data[0]
+            loadedProfile = {
+              name: row.name || profileInfo.name,
+              subtitles: row.subtitles ? (Array.isArray(row.subtitles) ? row.subtitles : row.subtitles.split(',').map(s => s.trim())) : profileInfo.subtitles,
+              bio: row.bio || profileInfo.bio,
+              profile_image: row.profile_image || '/assets/images/profile3.jpg',
+              github: row.github || 'https://github.com',
+              linkedin: row.linkedin || 'https://linkedin.com',
+              instagram: row.instagram || 'https://instagram.com',
+              email: row.email || 'mailto:your-email@example.com',
+              cvUrl: row.cv_url || profileInfo.cvUrl || '/assets/cv.pdf'
+            }
           }
         }
       } catch (err) {
-        console.error("Error loading hero profile:", err)
+        console.error("Error loading hero profile from Supabase:", err)
+      }
+
+      // If not loaded from Supabase, check localStorage
+      if (!loadedProfile) {
+        const local = localStorage.getItem('db_profile')
+        if (local) {
+          try {
+            const parsed = JSON.parse(local)
+            loadedProfile = {
+              name: parsed.name || profileInfo.name,
+              subtitles: parsed.subtitles ? (Array.isArray(parsed.subtitles) ? parsed.subtitles : parsed.subtitles.split(',').map(s => s.trim())) : profileInfo.subtitles,
+              bio: parsed.bio || profileInfo.bio,
+              profile_image: parsed.profile_image || '/assets/images/profile3.jpg',
+              github: parsed.github || 'https://github.com',
+              linkedin: parsed.linkedin || 'https://linkedin.com',
+              instagram: parsed.instagram || 'https://instagram.com',
+              email: parsed.email || 'mailto:your-email@example.com',
+              cvUrl: parsed.cvUrl || profileInfo.cvUrl || '/assets/cv.pdf'
+            }
+          } catch (e) {}
+        }
+      }
+
+      if (loadedProfile) {
+        setProfile(loadedProfile)
       }
     }
     fetchProfile()

@@ -149,19 +149,20 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
         email: heroForm.email
       }
 
+      // Always persist to localStorage for immediate website update
+      localStorage.setItem('db_profile', JSON.stringify(profileData))
+
       if (isSupabaseConfigured && supabase) {
         const { error } = await supabase.from('profile').upsert([{ id: 1, ...profileData }])
         if (error) {
           if (error.code === '42P01' || error.message.includes('find the table') || error.message.includes('schema cache')) {
-            localStorage.setItem('db_profile', JSON.stringify(profileData))
-            showMsg('error', "Tabel 'profile' belum dibuat di Supabase SQL. Data disimpan secara lokal sementara.")
+            showMsg('error', "Tabel 'profile' belum dibuat di Supabase SQL. Data berhasil disimpan secara lokal!")
             return
           }
           throw error
         }
-        showMsg('success', 'Hero profile saved successfully to Supabase!')
+        showMsg('success', 'Hero profile saved successfully to Supabase and Local Storage!')
       } else {
-        localStorage.setItem('db_profile', JSON.stringify(profileData))
         showMsg('success', 'Hero profile saved locally (Preview mode).')
       }
     } catch (err) {
