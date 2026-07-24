@@ -51,32 +51,53 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     setLoading(true)
     try {
       if (isSupabaseConfigured && supabase) {
-        // Load from Supabase
-        const [pData, sData, eData, cData, profData] = await Promise.all([
+        // Load main collections from Supabase
+        const [pData, sData, eData, cData] = await Promise.all([
           supabase.from('projects').select('*').order('created_at', { ascending: false }),
           supabase.from('skills').select('*').order('created_at', { ascending: true }),
           supabase.from('experiences').select('*').order('start_date', { ascending: false }),
-          supabase.from('certificates').select('*').order('created_at', { ascending: false }),
-          supabase.from('profile').select('*').single()
+          supabase.from('certificates').select('*').order('created_at', { ascending: false })
         ])
 
         if (pData.data) setProjects(pData.data)
         if (sData.data) setSkills(sData.data)
         if (eData.data) setExperiences(eData.data)
         if (cData.data) setCertificates(cData.data)
-        if (profData.data) {
-          const prof = profData.data
-          setHeroForm({
-            name: prof.name || profileInfo.name,
-            subtitles: Array.isArray(prof.subtitles) ? prof.subtitles.join(', ') : (prof.subtitles || profileInfo.subtitles.join(', ')),
-            bio: prof.bio || profileInfo.bio,
-            profile_image: prof.profile_image || '/assets/images/profile3.jpg',
-            github: prof.github || 'https://github.com',
-            linkedin: prof.linkedin || 'https://linkedin.com',
-            instagram: prof.instagram || 'https://instagram.com',
-            email: prof.email || 'mailto:your-email@example.com'
-          })
+
+        // Load profile safely (fallback to local if table doesn't exist yet)
+        try {
+          const { data: prof, error: profErr } = await supabase.from('profile').select('*').single()
+          if (!profErr && prof) {
+            setHeroForm({
+              name: prof.name || profileInfo.name,
+              subtitles: Array.isArray(prof.subtitles) ? prof.subtitles.join(', ') : (prof.subtitles || profileInfo.subtitles.join(', ')),
+              bio: prof.bio || profileInfo.bio,
+              profile_image: prof.profile_image || '/assets/images/profile3.jpg',
+              github: prof.github || 'https://github.com',
+              linkedin: prof.linkedin || 'https://linkedin.com',
+              instagram: prof.instagram || 'https://instagram.com',
+              email: prof.email || 'mailto:your-email@example.com'
+            })
+          } else {
+            const localProfile = localStorage.getItem('db_profile')
+            if (localProfile) {
+              const parsed = JSON.parse(localProfile)
+              setHeroForm({
+                name: parsed.name || profileInfo.name,
+                subtitles: Array.isArray(parsed.subtitles) ? parsed.subtitles.join(', ') : (parsed.subtitles || profileInfo.subtitles.join(', ')),
+                bio: parsed.bio || profileInfo.bio,
+                profile_image: parsed.profile_image || '/assets/images/profile3.jpg',
+                github: parsed.github || 'https://github.com',
+                linkedin: parsed.linkedin || 'https://linkedin.com',
+                instagram: parsed.instagram || 'https://instagram.com',
+                email: parsed.email || 'mailto:your-email@example.com'
+              })
+            }
+          }
+        } catch (e) {
+          console.warn("Profile table query notice:", e)
         }
+
       } else {
         // Load from LocalStorage or Fallback Mock Data
         const localProjects = localStorage.getItem('db_projects')
@@ -130,7 +151,14 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
       if (isSupabaseConfigured && supabase) {
         const { error } = await supabase.from('profile').upsert([{ id: 1, ...profileData }])
-        if (error) throw error
+        if (error) {
+          if (error.code === '42P01' || error.message.includes('find the table') || error.message.includes('schema cache')) {
+            localStorage.setItem('db_profile', JSON.stringify(profileData))
+            showMsg('error', "Tabel 'profile' belum dibuat di Supabase SQL. Data disimpan secara lokal sementara.")
+            return
+          }
+          throw error
+        }
         showMsg('success', 'Hero profile saved successfully to Supabase!')
       } else {
         localStorage.setItem('db_profile', JSON.stringify(profileData))
