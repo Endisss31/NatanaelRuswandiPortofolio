@@ -15,7 +15,7 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
   const handleLogin = async (e) => {
     e.preventDefault()
     if (!email || !password) {
-      setErrorMsg('Please enter email and password.')
+      setErrorMsg('Silakan masukkan email dan kata sandi.')
       return
     }
 
@@ -34,12 +34,12 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
           localStorage.setItem('mock_admin_session', 'true')
           window.location.reload() // App.jsx catches this and redirects
         } else {
-          setErrorMsg('Invalid preview credentials. Use email: admin@portfolio.com and password: admin123')
+          setErrorMsg('Kredensial preview tidak valid. Gunakan email: admin@portfolio.com dan kata sandi: admin123')
         }
       }
     } catch (err) {
       console.error(err)
-      setErrorMsg(err.message || 'Authentication failed. Please check credentials.')
+      setErrorMsg(err.message || 'Gagal autentikasi. Silakan periksa kembali email dan kata sandi Anda.')
     } finally {
       setLoading(false)
     }
@@ -61,7 +61,7 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
             className="flex items-center gap-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors text-sm font-semibold group"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
-            Back to Portfolio
+            Kembali ke Portofolio
           </button>
 
           {/* Theme Toggle Button */}
@@ -87,9 +87,9 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
             <div className="p-3 bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400 rounded-2xl mb-4 shadow-inner">
               <Shield size={32} />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Authentication</h1>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Autentikasi Admin</h1>
             <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 font-semibold uppercase tracking-wider">
-              Control Panel Portal
+              Portal Panel Kontrol
             </p>
           </div>
 
@@ -98,9 +98,9 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
             <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-3 text-amber-600 dark:text-amber-400 text-xs font-semibold mb-6">
               <AlertTriangle size={18} className="flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold">Database Inactive (Preview Mode)</p>
+                <p className="font-bold">Database Tidak Aktif (Mode Preview)</p>
                 <p className="text-slate-500 dark:text-slate-400 font-medium mt-1 leading-normal">
-                  No Supabase URL/Key provided in env. Logs in using mock credentials:
+                  Supabase belum terhubung di file .env. Masuk menggunakan akun preview:
                 </p>
                 <code className="block bg-slate-100 dark:bg-slate-950/80 px-2 py-1 rounded text-amber-600 dark:text-amber-300 font-mono mt-1.5 font-bold border border-amber-500/10">
                   Email: admin@portfolio.com <br />
@@ -116,7 +116,7 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <Mail size={12} />
-                Email Address
+                Alamat Email
               </label>
               <input
                 type="email"
@@ -133,7 +133,7 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <Lock size={12} />
-                Password
+                Kata Sandi
               </label>
               <div className="relative">
                 <input
@@ -163,10 +163,10 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
               {loading ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                  Authenticating...
+                  Memverifikasi...
                 </>
               ) : (
-                'Sign In'
+                'Masuk Admin'
               )}
             </button>
 

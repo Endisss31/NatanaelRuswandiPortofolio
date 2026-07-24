@@ -15,7 +15,7 @@ import Contact from './components/Contact'
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard'
 
-import { LanguageProvider } from './context/LanguageContext'
+import { LanguageProvider, useLanguage } from './context/LanguageContext'
 
 // Theme Provider and Page Layout
 const MainLayout = ({ darkMode, setDarkMode }) => {

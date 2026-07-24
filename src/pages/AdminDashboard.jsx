@@ -592,9 +592,9 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                 <ShieldAlert size={18} />
               </div>
               <div>
-                <h2 className="font-bold text-slate-900 dark:text-white leading-tight">Admin Area</h2>
+                <h2 className="font-bold text-slate-900 dark:text-white leading-tight">Area Admin</h2>
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  {!isSupabaseConfigured ? 'Preview Mode' : 'Connected'}
+                  {!isSupabaseConfigured ? 'Mode Preview' : 'Terhubung'}
                 </span>
               </div>
             </div>
@@ -605,7 +605,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                 onClick={() => setDarkMode(!darkMode)}
                 className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 transition-colors shadow-sm"
                 aria-label="Toggle Theme"
-                title="Toggle Light/Dark Theme"
+                title="Ganti Tema Terang/Gelap"
               >
                 {darkMode ? <Sun size={18} /> : <Moon size={18} />}
               </button>
@@ -615,12 +615,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
           {/* Navigation Buttons */}
           <nav className="space-y-1">
             {[
-              { id: 'hero', label: 'Profile & About Me', icon: <User size={18} /> },
-              { id: 'projects', label: 'Projects', icon: <FolderGit2 size={18} /> },
-              { id: 'skills', label: 'Skills', icon: <Code2 size={18} /> },
-              { id: 'experiences', label: 'Experiences', icon: <Briefcase size={18} /> },
-              { id: 'certificates', label: 'Certificates', icon: <Award size={18} /> },
-              { id: 'cv', label: 'CV / Assets', icon: <FileUp size={18} /> }
+              { id: 'hero', label: 'Profil & Tentang Saya', icon: <User size={18} /> },
+              { id: 'projects', label: 'Kelola Proyek', icon: <FolderGit2 size={18} /> },
+              { id: 'skills', label: 'Kelola Keahlian', icon: <Code2 size={18} /> },
+              { id: 'experiences', label: 'Kelola Pengalaman', icon: <Briefcase size={18} /> },
+              { id: 'certificates', label: 'Kelola Sertifikat', icon: <Award size={18} /> },
+              { id: 'cv', label: 'Kelola CV / Berkas', icon: <FileUp size={18} /> }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -645,7 +645,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
             className="w-full px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-500/10 dark:text-slate-400 dark:hover:text-rose-400 dark:hover:bg-rose-500/10 transition-colors flex items-center gap-3"
           >
             <LogOut size={18} />
-            Exit Dashboard
+            Keluar Admin
           </button>
         </div>
       </aside>
