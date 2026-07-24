@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   FolderGit2, Award, Briefcase, Code2, FileUp, LogOut, 
-  Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle2, ShieldAlert
+  Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle2, ShieldAlert, Sun, Moon
 } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { mockProjects, mockSkills, mockExperiences, mockCertificates } from '../data/mockData'
 
-const AdminDashboard = () => {
+const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('projects')
   
@@ -435,22 +435,36 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-300">
       
       {/* Sidebar Controls */}
-      <aside className="w-full md:w-64 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 p-6 flex flex-col justify-between">
+      <aside className="w-full md:w-64 bg-white dark:bg-slate-900 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800 p-6 flex flex-col justify-between transition-colors">
         <div>
           {/* Header Branding */}
-          <div className="flex items-center gap-2 mb-8 pb-4 border-b border-slate-800">
-            <div className="p-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-lg">
-              <ShieldAlert size={18} />
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400 rounded-lg">
+                <ShieldAlert size={18} />
+              </div>
+              <div>
+                <h2 className="font-bold text-slate-900 dark:text-white leading-tight">Admin Area</h2>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  {!isSupabaseConfigured ? 'Preview Mode' : 'Connected'}
+                </span>
+              </div>
             </div>
-            <div>
-              <h2 className="font-bold text-white leading-tight">Admin Area</h2>
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                {!isSupabaseConfigured ? 'Preview Mode' : 'Connected'}
-              </span>
-            </div>
+
+            {/* Theme Toggle Button */}
+            {setDarkMode && (
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 transition-colors shadow-sm"
+                aria-label="Toggle Theme"
+                title="Toggle Light/Dark Theme"
+              >
+                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
+            )}
           </div>
 
           {/* Navigation Buttons */}
@@ -467,8 +481,8 @@ const AdminDashboard = () => {
                 onClick={() => { setActiveTab(tab.id); setEditingId(null); }}
                 className={`w-full px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-3 transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800/50'
                 }`}
               >
                 {tab.icon}
@@ -479,10 +493,10 @@ const AdminDashboard = () => {
         </div>
 
         {/* Exit Button */}
-        <div className="pt-6 border-t border-slate-800 mt-6">
+        <div className="pt-6 border-t border-slate-200 dark:border-slate-800 mt-6">
           <button
             onClick={handleLogout}
-            className="w-full px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:text-rose-400 hover:bg-rose-500/5 transition-colors flex items-center gap-3"
+            className="w-full px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-500/10 dark:text-slate-400 dark:hover:text-rose-400 dark:hover:bg-rose-500/10 transition-colors flex items-center gap-3"
           >
             <LogOut size={18} />
             Exit Dashboard
@@ -508,8 +522,8 @@ const AdminDashboard = () => {
         {/* Header summary info */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white capitalize">{activeTab} Manager</h1>
-            <p className="text-slate-400 text-sm mt-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white capitalize">{activeTab} Manager</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
               Add, modify, or remove website portfolio records below.
             </p>
           </div>
@@ -530,28 +544,28 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
                 {/* Save/Edit form */}
-                <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                  <h3 className="text-lg font-bold text-white mb-6">
+                <div className="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">
                     {editingId ? 'Edit Project' : 'Add New Project'}
                   </h3>
                   <form onSubmit={saveProject} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Project Title</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Project Title</label>
                       <input 
                         type="text" 
                         value={projectForm.title} 
                         onChange={(e) => setProjectForm({...projectForm, title: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="My Awesome App" 
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Category</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Category</label>
                       <select 
                         value={projectForm.category} 
                         onChange={(e) => setProjectForm({...projectForm, category: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm"
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
                       >
                         <option value="Web">Web Project</option>
                         <option value="AI">AI Project</option>
@@ -559,37 +573,37 @@ const AdminDashboard = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Description</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Description</label>
                       <textarea 
                         value={projectForm.description} 
                         onChange={(e) => setProjectForm({...projectForm, description: e.target.value})}
                         rows="3" 
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm resize-none" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
                         placeholder="Write short description..."
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tech Stack (comma separated)</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Tech Stack (comma separated)</label>
                       <input 
                         type="text" 
                         value={projectForm.tech_stack} 
                         onChange={(e) => setProjectForm({...projectForm, tech_stack: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="React, Tailwind, Supabase" 
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Project Image</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Project Image</label>
                       <div className="flex gap-2">
                         <input 
                           type="text" 
                           value={projectForm.image_url} 
                           onChange={(e) => setProjectForm({...projectForm, image_url: e.target.value})}
-                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                           placeholder="Image URL" 
                         />
-                        <label className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors border border-slate-700">
+                        <label className="px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors border border-slate-300 dark:border-slate-700">
                           Upload
                           <input 
                             type="file" 
@@ -601,22 +615,22 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">GitHub URL</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">GitHub URL</label>
                       <input 
                         type="url" 
                         value={projectForm.github_link} 
                         onChange={(e) => setProjectForm({...projectForm, github_link: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="https://github.com/..." 
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Live Demo URL</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Live Demo URL</label>
                       <input 
                         type="url" 
                         value={projectForm.live_link} 
                         onChange={(e) => setProjectForm({...projectForm, live_link: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="https://example.com" 
                       />
                     </div>
@@ -626,7 +640,7 @@ const AdminDashboard = () => {
                         Save Project
                       </button>
                       {editingId && (
-                        <button type="button" onClick={resetProjectForm} className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs">
+                        <button type="button" onClick={resetProjectForm} className="px-4 py-2.5 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs">
                           Cancel
                         </button>
                       )}
@@ -636,30 +650,30 @@ const AdminDashboard = () => {
 
                 {/* Database records list */}
                 <div className="lg:col-span-7 space-y-4">
-                  <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-slate-800 bg-slate-950/40 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                        <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950/60 text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
                           <th className="p-4">Title</th>
                           <th className="p-4">Category</th>
                           <th className="p-4 text-right">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800">
+                      <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                         {projects.map((p) => (
-                          <tr key={p.id} className="text-sm text-slate-300 hover:bg-slate-950/20">
-                            <td className="p-4 font-semibold text-white">{p.title}</td>
+                          <tr key={p.id} className="text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/20">
+                            <td className="p-4 font-semibold text-slate-900 dark:text-white">{p.title}</td>
                             <td className="p-4">
-                              <span className="px-2 py-0.5 rounded-full bg-slate-800 text-xs text-blue-400 border border-white/5">
+                              <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-white/5 font-semibold">
                                 {p.category}
                               </span>
                             </td>
                             <td className="p-4 text-right">
                               <div className="flex justify-end gap-2">
-                                <button onClick={() => editProject(p)} className="p-2 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors" title="Edit">
+                                <button onClick={() => editProject(p)} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" title="Edit">
                                   <Edit2 size={14} />
                                 </button>
-                                <button onClick={() => deleteProject(p.id)} className="p-2 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition-colors" title="Delete">
+                                <button onClick={() => deleteProject(p.id)} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors" title="Delete">
                                   <Trash2 size={14} />
                                 </button>
                               </div>
@@ -680,28 +694,28 @@ const AdminDashboard = () => {
             {activeTab === 'skills' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
-                <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                  <h3 className="text-lg font-bold text-white mb-6">
+                <div className="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">
                     {editingId ? 'Edit Skill' : 'Add New Skill'}
                   </h3>
                   <form onSubmit={saveSkill} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Skill Name</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Skill Name</label>
                       <input 
                         type="text" 
                         value={skillForm.name} 
                         onChange={(e) => setSkillForm({...skillForm, name: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="React, Kotlin, TensorFlow..." 
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Category</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Category</label>
                       <select 
                         value={skillForm.category} 
                         onChange={(e) => setSkillForm({...skillForm, category: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm"
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
                       >
                         <option value="Frontend">Frontend</option>
                         <option value="Backend">Backend</option>
@@ -711,14 +725,14 @@ const AdminDashboard = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Proficiency Level ({skillForm.proficiency}%)</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Proficiency Level ({skillForm.proficiency}%)</label>
                       <input 
                         type="range" 
                         min="0" 
                         max="100" 
                         value={skillForm.proficiency} 
                         onChange={(e) => setSkillForm({...skillForm, proficiency: e.target.value})}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                     <div className="flex gap-2 pt-2">
@@ -727,7 +741,7 @@ const AdminDashboard = () => {
                         Save Skill
                       </button>
                       {editingId && (
-                        <button type="button" onClick={resetSkillForm} className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs">
+                        <button type="button" onClick={resetSkillForm} className="px-4 py-2.5 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs">
                           Cancel
                         </button>
                       )}
@@ -735,24 +749,24 @@ const AdminDashboard = () => {
                   </form>
                 </div>
 
-                <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-800 bg-slate-950/40 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                      <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950/60 text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
                         <th className="p-4">Name</th>
                         <th className="p-4">Category</th>
                         <th className="p-4">Proficiency</th>
                         <th className="p-4 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800">
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                       {skills.map((s) => (
-                        <tr key={s.id} className="text-sm text-slate-300 hover:bg-slate-950/20">
-                          <td className="p-4 font-semibold text-white">{s.name}</td>
-                          <td className="p-4 text-xs text-slate-400">{s.category}</td>
+                        <tr key={s.id} className="text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/20">
+                          <td className="p-4 font-semibold text-slate-900 dark:text-white">{s.name}</td>
+                          <td className="p-4 text-xs text-slate-500 dark:text-slate-400">{s.category}</td>
                           <td className="p-4">
                             <div className="flex items-center gap-2">
-                              <div className="h-1.5 w-16 bg-slate-950 rounded-full overflow-hidden">
+                              <div className="h-1.5 w-16 bg-slate-200 dark:bg-slate-950 rounded-full overflow-hidden">
                                 <div className="h-full bg-blue-500 rounded-full" style={{ width: `${s.proficiency}%` }}></div>
                               </div>
                               <span className="text-xs font-semibold">{s.proficiency}%</span>
@@ -760,10 +774,10 @@ const AdminDashboard = () => {
                           </td>
                           <td className="p-4 text-right">
                             <div className="flex justify-end gap-2">
-                              <button onClick={() => { setEditingId(s.id); setSkillForm({ name: s.name, category: s.category, proficiency: s.proficiency }); }} className="p-2 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors" title="Edit">
+                              <button onClick={() => { setEditingId(s.id); setSkillForm({ name: s.name, category: s.category, proficiency: s.proficiency }); }} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" title="Edit">
                                 <Edit2 size={14} />
                               </button>
-                              <button onClick={() => deleteSkill(s.id)} className="p-2 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition-colors" title="Delete">
+                              <button onClick={() => deleteSkill(s.id)} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors" title="Delete">
                                 <Trash2 size={14} />
                               </button>
                             </div>
@@ -783,39 +797,39 @@ const AdminDashboard = () => {
             {activeTab === 'experiences' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
-                <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                  <h3 className="text-lg font-bold text-white mb-6">
+                <div className="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">
                     {editingId ? 'Edit Experience' : 'Add Experience'}
                   </h3>
                   <form onSubmit={saveExperience} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Role Title</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Role Title</label>
                       <input 
                         type="text" 
                         value={expForm.role} 
                         onChange={(e) => setExpForm({...expForm, role: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="Research Assistant" 
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Company / Org Name</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Company / Org Name</label>
                       <input 
                         type="text" 
                         value={expForm.company} 
                         onChange={(e) => setExpForm({...expForm, company: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="Lab CV / Tech Co." 
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Experience Type</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Experience Type</label>
                       <select 
                         value={expForm.type} 
                         onChange={(e) => setExpForm({...expForm, type: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm"
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
                       >
                         <option value="Internship">Internship</option>
                         <option value="Research">Research</option>
@@ -825,34 +839,34 @@ const AdminDashboard = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Start Date</label>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Start Date</label>
                         <input 
                           type="text" 
                           value={expForm.start_date} 
                           onChange={(e) => setExpForm({...expForm, start_date: e.target.value})}
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                           placeholder="2024-03" 
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">End Date</label>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">End Date</label>
                         <input 
                           type="text" 
                           value={expForm.end_date} 
                           onChange={(e) => setExpForm({...expForm, end_date: e.target.value})}
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                           placeholder="Present / 2024-08" 
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Description</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Description</label>
                       <textarea 
                         value={expForm.description} 
                         onChange={(e) => setExpForm({...expForm, description: e.target.value})}
                         rows="3" 
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm resize-none" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
                         placeholder="Write key achievements, tasks..." 
                       />
                     </div>
@@ -862,7 +876,7 @@ const AdminDashboard = () => {
                         Save Record
                       </button>
                       {editingId && (
-                        <button type="button" onClick={resetExpForm} className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs">
+                        <button type="button" onClick={resetExpForm} className="px-4 py-2.5 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs">
                           Cancel
                         </button>
                       )}
@@ -870,33 +884,33 @@ const AdminDashboard = () => {
                   </form>
                 </div>
 
-                <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-800 bg-slate-950/40 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                      <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950/60 text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
                         <th className="p-4">Role</th>
                         <th className="p-4">Company</th>
                         <th className="p-4">Duration</th>
                         <th className="p-4 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800">
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                       {experiences.map((ex) => (
-                        <tr key={ex.id} className="text-sm text-slate-300 hover:bg-slate-950/20">
-                          <td className="p-4 font-semibold text-white">
+                        <tr key={ex.id} className="text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/20">
+                          <td className="p-4 font-semibold text-slate-900 dark:text-white">
                             <div>{ex.role}</div>
-                            <span className="text-[10px] text-indigo-400 font-semibold border border-indigo-500/20 px-2 py-0.5 rounded-full bg-indigo-500/5 mt-1 inline-block">
+                            <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold border border-indigo-500/20 px-2 py-0.5 rounded-full bg-indigo-500/10 dark:bg-indigo-500/5 mt-1 inline-block">
                               {ex.type}
                             </span>
                           </td>
-                          <td className="p-4 font-medium text-slate-400">{ex.company}</td>
+                          <td className="p-4 font-medium text-slate-600 dark:text-slate-400">{ex.company}</td>
                           <td className="p-4 text-xs font-semibold">{ex.start_date} - {ex.end_date}</td>
                           <td className="p-4 text-right">
                             <div className="flex justify-end gap-2">
-                              <button onClick={() => { setEditingId(ex.id); setExpForm({ role: ex.role, company: ex.company, type: ex.type, start_date: ex.start_date, end_date: ex.end_date, description: ex.description }); }} className="p-2 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors" title="Edit">
+                              <button onClick={() => { setEditingId(ex.id); setExpForm({ role: ex.role, company: ex.company, type: ex.type, start_date: ex.start_date, end_date: ex.end_date, description: ex.description }); }} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" title="Edit">
                                 <Edit2 size={14} />
                               </button>
-                              <button onClick={() => deleteExperience(ex.id)} className="p-2 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition-colors" title="Delete">
+                              <button onClick={() => deleteExperience(ex.id)} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors" title="Delete">
                                 <Trash2 size={14} />
                               </button>
                             </div>
@@ -916,65 +930,65 @@ const AdminDashboard = () => {
             {activeTab === 'certificates' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
-                <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                  <h3 className="text-lg font-bold text-white mb-6">
+                <div className="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">
                     {editingId ? 'Edit Certificate' : 'Add Certificate'}
                   </h3>
                   <form onSubmit={saveCertificate} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Certificate Title</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Certificate Title</label>
                       <input 
                         type="text" 
                         value={certForm.title} 
                         onChange={(e) => setCertForm({...certForm, title: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="Deep Learning Specialization" 
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Issuer</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Issuer</label>
                       <input 
                         type="text" 
                         value={certForm.issuer} 
                         onChange={(e) => setCertForm({...certForm, issuer: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="Coursera / Google" 
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Issue Date</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Issue Date</label>
                       <input 
                         type="text" 
                         value={certForm.date} 
                         onChange={(e) => setCertForm({...certForm, date: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="2024-05" 
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Verification URL</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Verification URL</label>
                       <input 
                         type="url" 
                         value={certForm.credential_url} 
                         onChange={(e) => setCertForm({...certForm, credential_url: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                         placeholder="https://coursera.org/verify/..." 
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Credential Image</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Credential Image</label>
                       <div className="flex gap-2">
                         <input 
                           type="text" 
                           value={certForm.image_url} 
                           onChange={(e) => setCertForm({...certForm, image_url: e.target.value})}
-                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-white text-sm" 
+                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
                           placeholder="Image link" 
                         />
-                        <label className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors border border-slate-700">
+                        <label className="px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors border border-slate-300 dark:border-slate-700">
                           Upload
                           <input 
                             type="file" 
@@ -991,7 +1005,7 @@ const AdminDashboard = () => {
                         Save Certificate
                       </button>
                       {editingId && (
-                        <button type="button" onClick={resetCertForm} className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs">
+                        <button type="button" onClick={resetCertForm} className="px-4 py-2.5 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs">
                           Cancel
                         </button>
                       )}
@@ -999,26 +1013,26 @@ const AdminDashboard = () => {
                   </form>
                 </div>
 
-                <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-800 bg-slate-950/40 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                      <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950/60 text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
                         <th className="p-4">Certificate</th>
                         <th className="p-4">Issuer</th>
                         <th className="p-4 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800">
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                       {certificates.map((c) => (
-                        <tr key={c.id} className="text-sm text-slate-300 hover:bg-slate-950/20">
-                          <td className="p-4 font-semibold text-white">{c.title}</td>
-                          <td className="p-4 text-slate-400 font-medium">{c.issuer}</td>
+                        <tr key={c.id} className="text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/20">
+                          <td className="p-4 font-semibold text-slate-900 dark:text-white">{c.title}</td>
+                          <td className="p-4 text-slate-600 dark:text-slate-400 font-medium">{c.issuer}</td>
                           <td className="p-4 text-right">
                             <div className="flex justify-end gap-2">
-                              <button onClick={() => { setEditingId(c.id); setCertForm({ title: c.title, issuer: c.issuer, date: c.date, image_url: c.image_url, credential_url: c.credential_url || '' }); }} className="p-2 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors" title="Edit">
+                              <button onClick={() => { setEditingId(c.id); setCertForm({ title: c.title, issuer: c.issuer, date: c.date, image_url: c.image_url, credential_url: c.credential_url || '' }); }} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" title="Edit">
                                 <Edit2 size={14} />
                               </button>
-                              <button onClick={() => deleteCertificate(c.id)} className="p-2 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition-colors" title="Delete">
+                              <button onClick={() => deleteCertificate(c.id)} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors" title="Delete">
                                 <Trash2 size={14} />
                               </button>
                             </div>
@@ -1036,19 +1050,19 @@ const AdminDashboard = () => {
                SETTINGS / CV VIEW
                ======================================================== */}
             {activeTab === 'cv' && (
-              <div className="max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl p-8 space-y-6">
+              <div className="max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 space-y-6 shadow-sm dark:shadow-none">
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-2">Curriculum Vitae (CV) Setup</h3>
-                  <p className="text-slate-400 text-sm">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Curriculum Vitae (CV) Setup</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm">
                     Upload your latest CV PDF file to make it downloadable for recruiters.
                   </p>
                 </div>
 
-                <div className="p-6 bg-slate-950 border border-slate-850 rounded-xl space-y-4">
+                <div className="p-6 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl space-y-4">
                   <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
                     <div>
-                      <span className="block text-xs text-slate-500 font-bold uppercase tracking-wider">Current File Link</span>
-                      <a href={cvUrl || '/assets/cv.pdf'} target="_blank" rel="noreferrer" className="text-sm text-blue-400 hover:underline break-all font-semibold block mt-1">
+                      <span className="block text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Current File Link</span>
+                      <a href={cvUrl || '/assets/cv.pdf'} target="_blank" rel="noreferrer" className="text-sm text-blue-600 dark:text-blue-400 hover:underline break-all font-semibold block mt-1">
                         {cvUrl || '/assets/cv.pdf'}
                       </a>
                     </div>
@@ -1065,7 +1079,7 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div className="p-4 border border-dashed border-slate-800 rounded-xl bg-slate-900/40 text-xs text-slate-500 leading-relaxed">
+                <div className="p-4 border border-dashed border-slate-300 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-900/40 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                   Notice: Uploading a new PDF replaces the link on the landing page download button. If you are in preview mode, this references a temporary path in memory. Setting up Supabase Storage allows permanent cloud-based storage.
                 </div>
               </div>

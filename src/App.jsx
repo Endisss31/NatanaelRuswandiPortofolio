@@ -132,13 +132,13 @@ function App() {
         <Route 
           path="/admin/login" 
           element={
-            session ? <Navigate to="/admin/dashboard" replace /> : <AdminLogin />
+            session ? <Navigate to="/admin/dashboard" replace /> : <AdminLogin darkMode={darkMode} setDarkMode={handleSetDarkMode} />
           } 
         />
         <Route 
           path="/admin/dashboard" 
           element={
-            session ? <AdminDashboard session={session} /> : <Navigate to="/admin/login" replace />
+            session ? <AdminDashboard session={session} darkMode={darkMode} setDarkMode={handleSetDarkMode} /> : <Navigate to="/admin/login" replace />
           } 
         />
         <Route path="*" element={<Navigate to="/" replace />} />
