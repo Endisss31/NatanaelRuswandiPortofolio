@@ -358,10 +358,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
       setProjects(updated)
       persistLocalData('db_projects', updated)
 
-      if (isSupabaseConfigured && supabase) {
+      if (isSupabaseConfigured && supabase && !String(id).includes('_local_')) {
         try {
           await supabase.from('projects').delete().eq('id', id)
-        } catch (subErr) {}
+        } catch (subErr) {
+          console.warn("Supabase project delete notice:", subErr)
+        }
       }
 
       showMsg('success', 'Project removed.')
@@ -442,10 +444,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
       setSkills(updated)
       persistLocalData('db_skills', updated)
 
-      if (isSupabaseConfigured && supabase) {
+      if (isSupabaseConfigured && supabase && !String(id).includes('_local_')) {
         try {
           await supabase.from('skills').delete().eq('id', id)
-        } catch (subErr) {}
+        } catch (subErr) {
+          console.warn("Supabase skill delete notice:", subErr)
+        }
       }
 
       showMsg('success', 'Skill deleted.')
@@ -512,14 +516,18 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const deleteExperience = async (id) => {
     if (!window.confirm('Delete this record?')) return
     try {
-      if (isSupabaseConfigured && supabase) {
-        const { error } = await supabase.from('experiences').delete().eq('id', id)
-        if (error) throw error
-      } else {
-        const updated = experiences.filter(ex => ex.id !== id)
-        setExperiences(updated)
-        persistLocalData('db_experiences', updated)
+      const updated = experiences.filter(ex => ex.id !== id)
+      setExperiences(updated)
+      persistLocalData('db_experiences', updated)
+
+      if (isSupabaseConfigured && supabase && !String(id).includes('_local_')) {
+        try {
+          await supabase.from('experiences').delete().eq('id', id)
+        } catch (subErr) {
+          console.warn("Supabase experience delete notice:", subErr)
+        }
       }
+
       showMsg('success', 'Record removed.')
       loadAllData()
     } catch (err) {
@@ -592,10 +600,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
       setCertificates(updated)
       persistLocalData('db_certificates', updated)
 
-      if (isSupabaseConfigured && supabase) {
+      if (isSupabaseConfigured && supabase && !String(id).includes('_local_')) {
         try {
           await supabase.from('certificates').delete().eq('id', id)
-        } catch (subErr) {}
+        } catch (subErr) {
+          console.warn("Supabase certificate delete notice:", subErr)
+        }
       }
 
       showMsg('success', 'Certificate removed.')
