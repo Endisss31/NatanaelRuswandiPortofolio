@@ -18,17 +18,16 @@ const Experience = () => {
             .order('start_date', { ascending: false })
 
           if (error) throw error
-          if (data && data.length > 0) {
-            setExperiences(data)
-            return
-          }
+          setExperiences(data || [])
+          setLoading(false)
+          return
         }
       } catch (err) {
         console.error("Error loading experiences from database, using fallback:", err)
       } finally {
         setLoading(false)
       }
-      // Fallback
+      // Fallback only if Supabase is NOT configured or threw an error
       setExperiences(mockExperiences)
     }
 

@@ -19,17 +19,16 @@ const Certificates = () => {
             .order('created_at', { ascending: false })
 
           if (error) throw error
-          if (data && data.length > 0) {
-            setCertificates(data)
-            return
-          }
+          setCertificates(data || [])
+          setLoading(false)
+          return
         }
       } catch (err) {
         console.error("Error loading certificates from database, using fallback:", err)
       } finally {
         setLoading(false)
       }
-      // Fallback
+      // Fallback only if Supabase is NOT configured or threw an error
       setCertificates(mockCertificates)
     }
 

@@ -19,17 +19,16 @@ const Skills = () => {
             .order('created_at', { ascending: true })
 
           if (error) throw error
-          if (data && data.length > 0) {
-            setSkills(data)
-            return
-          }
+          setSkills(data || [])
+          setLoading(false)
+          return
         }
       } catch (err) {
         console.error("Error loading skills from database, using fallback:", err)
       } finally {
         setLoading(false)
       }
-      // Fallback
+      // Fallback only if Supabase is NOT configured or threw an error
       setSkills(mockSkills)
     }
 

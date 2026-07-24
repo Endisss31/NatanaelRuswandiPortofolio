@@ -19,17 +19,16 @@ const Achievements = () => {
             .order('date', { ascending: false })
 
           if (error) throw error
-          if (data && data.length > 0) {
-            setAchievements(data)
-            return
-          }
+          setAchievements(data || [])
+          setLoading(false)
+          return
         }
       } catch (err) {
         console.error("Error loading achievements from database, using fallback:", err)
       } finally {
         setLoading(false)
       }
-      // Fallback
+      // Fallback only if Supabase is NOT configured or threw an error
       setAchievements(mockAchievements)
     }
 

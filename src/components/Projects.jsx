@@ -20,17 +20,16 @@ const Projects = () => {
             .order('created_at', { ascending: false })
 
           if (error) throw error
-          if (data && data.length > 0) {
-            setProjects(data)
-            return
-          }
+          setProjects(data || [])
+          setLoading(false)
+          return
         }
       } catch (err) {
         console.error("Error loading projects from database, using fallback:", err)
       } finally {
         setLoading(false)
       }
-      // Fallback
+      // Fallback only if Supabase is NOT configured or threw an error
       setProjects(mockProjects)
     }
 
