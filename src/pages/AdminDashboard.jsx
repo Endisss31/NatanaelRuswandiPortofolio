@@ -22,16 +22,24 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const [heroForm, setHeroForm] = useState({
     name: profileInfo.name,
     subtitles: profileInfo.subtitles.join(', '),
+    subtitles_id: (profileInfo.subtitles_id || profileInfo.subtitles).join(', '),
+    subtitles_en: (profileInfo.subtitles_en || profileInfo.subtitles).join(', '),
     bio: profileInfo.bio,
+    bio_id: profileInfo.bio_id || profileInfo.bio,
+    bio_en: profileInfo.bio_en || profileInfo.bio,
     profile_image: '/assets/images/profile3.jpg',
     github: 'https://github.com',
     linkedin: 'https://linkedin.com',
     instagram: 'https://instagram.com',
     email: 'mailto:your-email@example.com',
     mission: profileInfo.mission || '',
+    mission_id: profileInfo.mission_id || profileInfo.mission || '',
+    mission_en: profileInfo.mission_en || profileInfo.mission || '',
     years_exp: profileInfo.years_exp || '3+',
     projects_count: profileInfo.projects_count || '20+',
     career_goals: profileInfo.careerGoals || '',
+    career_goals_id: profileInfo.career_goals_id || profileInfo.careerGoals || '',
+    career_goals_en: profileInfo.career_goals_en || profileInfo.careerGoals || '',
     education: profileInfo.education || []
   })
 
@@ -76,16 +84,24 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
             setHeroForm({
               name: prof.name || profileInfo.name,
               subtitles: Array.isArray(prof.subtitles) ? prof.subtitles.join(', ') : (prof.subtitles || profileInfo.subtitles.join(', ')),
+              subtitles_id: Array.isArray(prof.subtitles_id) ? prof.subtitles_id.join(', ') : (prof.subtitles_id || profileInfo.subtitles_id.join(', ')),
+              subtitles_en: Array.isArray(prof.subtitles_en) ? prof.subtitles_en.join(', ') : (prof.subtitles_en || profileInfo.subtitles_en.join(', ')),
               bio: prof.bio || profileInfo.bio,
+              bio_id: prof.bio_id || profileInfo.bio_id || prof.bio || profileInfo.bio,
+              bio_en: prof.bio_en || profileInfo.bio_en || prof.bio || profileInfo.bio,
               profile_image: prof.profile_image || '/assets/images/profile3.jpg',
               github: prof.github || 'https://github.com',
               linkedin: prof.linkedin || 'https://linkedin.com',
               instagram: prof.instagram || 'https://instagram.com',
               email: prof.email || 'mailto:your-email@example.com',
               mission: prof.mission || profileInfo.mission,
+              mission_id: prof.mission_id || profileInfo.mission_id || prof.mission || profileInfo.mission,
+              mission_en: prof.mission_en || profileInfo.mission_en || prof.mission || profileInfo.mission,
               years_exp: prof.years_exp || '3+',
               projects_count: prof.projects_count || '20+',
               career_goals: prof.career_goals || prof.careerGoals || profileInfo.careerGoals,
+              career_goals_id: prof.career_goals_id || profileInfo.career_goals_id || prof.career_goals || profileInfo.careerGoals,
+              career_goals_en: prof.career_goals_en || profileInfo.career_goals_en || prof.career_goals || profileInfo.careerGoals,
               education: prof.education ? (typeof prof.education === 'string' ? JSON.parse(prof.education) : prof.education) : profileInfo.education
             })
           } else {
@@ -95,16 +111,24 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
               setHeroForm({
                 name: parsed.name || profileInfo.name,
                 subtitles: Array.isArray(parsed.subtitles) ? parsed.subtitles.join(', ') : (parsed.subtitles || profileInfo.subtitles.join(', ')),
+                subtitles_id: Array.isArray(parsed.subtitles_id) ? parsed.subtitles_id.join(', ') : (parsed.subtitles_id || profileInfo.subtitles_id.join(', ')),
+                subtitles_en: Array.isArray(parsed.subtitles_en) ? parsed.subtitles_en.join(', ') : (parsed.subtitles_en || profileInfo.subtitles_en.join(', ')),
                 bio: parsed.bio || profileInfo.bio,
+                bio_id: parsed.bio_id || profileInfo.bio_id || parsed.bio || profileInfo.bio,
+                bio_en: parsed.bio_en || profileInfo.bio_en || parsed.bio || profileInfo.bio,
                 profile_image: parsed.profile_image || '/assets/images/profile3.jpg',
                 github: parsed.github || 'https://github.com',
                 linkedin: parsed.linkedin || 'https://linkedin.com',
                 instagram: parsed.instagram || 'https://instagram.com',
                 email: parsed.email || 'mailto:your-email@example.com',
                 mission: parsed.mission || profileInfo.mission,
+                mission_id: parsed.mission_id || profileInfo.mission_id || parsed.mission || profileInfo.mission,
+                mission_en: parsed.mission_en || profileInfo.mission_en || parsed.mission || profileInfo.mission,
                 years_exp: parsed.years_exp || '3+',
                 projects_count: parsed.projects_count || '20+',
                 career_goals: parsed.career_goals || parsed.careerGoals || profileInfo.careerGoals,
+                career_goals_id: parsed.career_goals_id || profileInfo.career_goals_id || parsed.career_goals || profileInfo.careerGoals,
+                career_goals_en: parsed.career_goals_en || profileInfo.career_goals_en || parsed.career_goals || profileInfo.careerGoals,
                 education: parsed.education || profileInfo.education
               })
             }
@@ -184,16 +208,24 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
       const profileData = {
         name: heroForm.name,
         subtitles: typeof heroForm.subtitles === 'string' ? heroForm.subtitles.split(',').map(s => s.trim()) : heroForm.subtitles,
+        subtitles_id: typeof heroForm.subtitles_id === 'string' ? heroForm.subtitles_id.split(',').map(s => s.trim()) : heroForm.subtitles_id,
+        subtitles_en: typeof heroForm.subtitles_en === 'string' ? heroForm.subtitles_en.split(',').map(s => s.trim()) : heroForm.subtitles_en,
         bio: heroForm.bio,
+        bio_id: heroForm.bio_id,
+        bio_en: heroForm.bio_en,
         profile_image: heroForm.profile_image,
         github: heroForm.github,
         linkedin: heroForm.linkedin,
         instagram: heroForm.instagram,
         email: heroForm.email,
         mission: heroForm.mission,
+        mission_id: heroForm.mission_id,
+        mission_en: heroForm.mission_en,
         years_exp: heroForm.years_exp,
         projects_count: heroForm.projects_count,
         career_goals: heroForm.career_goals,
+        career_goals_id: heroForm.career_goals_id,
+        career_goals_en: heroForm.career_goals_en,
         education: heroForm.education
       }
 
@@ -719,34 +751,65 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
-                        Subtitles / Animated Roles (comma separated)
-                      </label>
-                      <input 
-                        type="text" 
-                        value={heroForm.subtitles} 
-                        onChange={(e) => setHeroForm({...heroForm, subtitles: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="AI Developer, Mobile Developer, Computer Vision Enthusiast" 
-                        required
-                      />
+                    {/* Animated Subtitles / Peran */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                          Peran / Subtitle Animasi (Bahasa Indonesia)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={heroForm.subtitles_id} 
+                          onChange={(e) => setHeroForm({...heroForm, subtitles_id: e.target.value, subtitles: e.target.value})}
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                          placeholder="Pengembang AI, Spesialis Computer Vision" 
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                          Animated Subtitles / Roles (English)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={heroForm.subtitles_en} 
+                          onChange={(e) => setHeroForm({...heroForm, subtitles_en: e.target.value})}
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                          placeholder="AI Developer, Computer Vision Enthusiast" 
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Bio Description */}
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
-                      Hero Bio / Short Introduction
-                    </label>
-                    <textarea 
-                      value={heroForm.bio} 
-                      onChange={(e) => setHeroForm({...heroForm, bio: e.target.value})}
-                      rows="3" 
-                      className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
-                      placeholder="Creative Developer & Designer..."
-                      required
-                    />
+                  {/* Bio Description (ID & EN) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                        Hero Bio (Bahasa Indonesia)
+                      </label>
+                      <textarea 
+                        value={heroForm.bio_id} 
+                        onChange={(e) => setHeroForm({...heroForm, bio_id: e.target.value, bio: e.target.value})}
+                        rows="3" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                        placeholder="Pengembang & Desainer Kreatif yang berfokus..."
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                        Hero Bio (English)
+                      </label>
+                      <textarea 
+                        value={heroForm.bio_en} 
+                        onChange={(e) => setHeroForm({...heroForm, bio_en: e.target.value})}
+                        rows="3" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                        placeholder="Creative Developer & Designer..."
+                        required
+                      />
+                    </div>
                   </div>
 
                   {/* Profile Picture */}
@@ -832,18 +895,32 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                   <div className="border-t border-slate-200 dark:border-slate-800 pt-6 space-y-6">
                     <h4 className="text-sm font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">2. About Me & Career Focus</h4>
 
-                    {/* Mission */}
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
-                        My Mission Statement
-                      </label>
-                      <textarea 
-                        value={heroForm.mission} 
-                        onChange={(e) => setHeroForm({...heroForm, mission: e.target.value})}
-                        rows="3" 
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
-                        placeholder="I am dedicated to building high-quality platforms..."
-                      />
+                    {/* Mission (ID & EN) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                          Misi Saya (Bahasa Indonesia)
+                        </label>
+                        <textarea 
+                          value={heroForm.mission_id} 
+                          onChange={(e) => setHeroForm({...heroForm, mission_id: e.target.value, mission: e.target.value})}
+                          rows="3" 
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                          placeholder="Saya berdedikasi membangun platform..."
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                          My Mission Statement (English)
+                        </label>
+                        <textarea 
+                          value={heroForm.mission_en} 
+                          onChange={(e) => setHeroForm({...heroForm, mission_en: e.target.value})}
+                          rows="3" 
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                          placeholder="I am dedicated to building high-quality platforms..."
+                        />
+                      </div>
                     </div>
 
                     {/* Stats */}
@@ -870,18 +947,32 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                       </div>
                     </div>
 
-                    {/* Career Goals */}
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
-                        Career Focus / Goals
-                      </label>
-                      <textarea 
-                        value={heroForm.career_goals} 
-                        onChange={(e) => setHeroForm({...heroForm, career_goals: e.target.value})}
-                        rows="3" 
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
-                        placeholder="My ultimate goal is to pioneer solutions..."
-                      />
+                    {/* Career Goals (ID & EN) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                          Fokus Karir (Bahasa Indonesia)
+                        </label>
+                        <textarea 
+                          value={heroForm.career_goals_id} 
+                          onChange={(e) => setHeroForm({...heroForm, career_goals_id: e.target.value, career_goals: e.target.value})}
+                          rows="3" 
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                          placeholder="Tujuan utama saya adalah melahirkan inovasi..."
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                          Career Focus / Goals (English)
+                        </label>
+                        <textarea 
+                          value={heroForm.career_goals_en} 
+                          onChange={(e) => setHeroForm({...heroForm, career_goals_en: e.target.value})}
+                          rows="3" 
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                          placeholder="My ultimate goal is to pioneer solutions..."
+                        />
+                      </div>
                     </div>
                   </div>
 

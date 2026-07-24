@@ -6,7 +6,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { useLanguage } from '../context/LanguageContext'
 
 const About = () => {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
   const [profile, setProfile] = useState(() => {
     const local = localStorage.getItem('db_profile')
     return local ? JSON.parse(local) : profileInfo
@@ -23,9 +23,13 @@ const About = () => {
             const row = data[0]
             loadedProfile = {
               mission: row.mission || profileInfo.mission,
+              mission_id: row.mission_id || null,
+              mission_en: row.mission_en || null,
               years_exp: row.years_exp || profileInfo.years_exp || "3+",
               projects_count: row.projects_count || profileInfo.projects_count || "20+",
               careerGoals: row.career_goals || row.careerGoals || profileInfo.careerGoals,
+              career_goals_id: row.career_goals_id || null,
+              career_goals_en: row.career_goals_en || null,
               education: row.education ? (typeof row.education === 'string' ? JSON.parse(row.education) : row.education) : profileInfo.education
             }
           }
@@ -41,9 +45,13 @@ const About = () => {
             const parsed = JSON.parse(local)
             loadedProfile = {
               mission: parsed.mission || profileInfo.mission,
+              mission_id: parsed.mission_id || null,
+              mission_en: parsed.mission_en || null,
               years_exp: parsed.years_exp || profileInfo.years_exp || "3+",
               projects_count: parsed.projects_count || profileInfo.projects_count || "20+",
               careerGoals: parsed.career_goals || parsed.careerGoals || profileInfo.careerGoals,
+              career_goals_id: parsed.career_goals_id || null,
+              career_goals_en: parsed.career_goals_en || null,
               education: parsed.education || profileInfo.education
             }
           } catch (e) {}
@@ -58,6 +66,14 @@ const About = () => {
   }, [])
 
   const educationList = profile.education && profile.education.length > 0 ? profile.education : profileInfo.education
+
+  const displayMission = lang === 'en'
+    ? (profile.mission_en || profile.mission || profileInfo.mission_en)
+    : (profile.mission_id || profile.mission || profileInfo.mission_id)
+
+  const displayCareerGoals = lang === 'en'
+    ? (profile.career_goals_en || profile.careerGoals || profileInfo.career_goals_en)
+    : (profile.career_goals_id || profile.careerGoals || profileInfo.career_goals_id)
 
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -86,7 +102,7 @@ const About = () => {
               {t('about.missionTitle')}
             </h3>
             <p className="text-slate-650 dark:text-slate-300 leading-relaxed mb-6">
-              {profile.mission || profileInfo.mission}
+              {displayMission}
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-slate-100/50 dark:bg-slate-900/60 border border-slate-200 dark:border-white/5 rounded-xl text-center">
@@ -107,7 +123,7 @@ const About = () => {
               {t('about.careerFocusTitle')}
             </h3>
             <p className="text-slate-650 dark:text-slate-300 leading-relaxed">
-              {profile.careerGoals || profile.career_goals || profileInfo.careerGoals}
+              {displayCareerGoals}
             </p>
           </div>
         </motion.div>

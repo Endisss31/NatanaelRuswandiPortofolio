@@ -6,7 +6,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { useLanguage } from '../context/LanguageContext'
 
 const Hero = () => {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
   const [profile, setProfile] = useState(() => {
     const local = localStorage.getItem('db_profile')
     return local ? JSON.parse(local) : profileInfo
@@ -24,7 +24,11 @@ const Hero = () => {
             loadedProfile = {
               name: row.name || profileInfo.name,
               subtitles: row.subtitles ? (Array.isArray(row.subtitles) ? row.subtitles : row.subtitles.split(',').map(s => s.trim())) : profileInfo.subtitles,
+              subtitles_id: row.subtitles_id ? (Array.isArray(row.subtitles_id) ? row.subtitles_id : row.subtitles_id.split(',').map(s => s.trim())) : null,
+              subtitles_en: row.subtitles_en ? (Array.isArray(row.subtitles_en) ? row.subtitles_en : row.subtitles_en.split(',').map(s => s.trim())) : null,
               bio: row.bio || profileInfo.bio,
+              bio_id: row.bio_id || null,
+              bio_en: row.bio_en || null,
               profile_image: row.profile_image || '/assets/images/profile3.jpg',
               github: row.github || 'https://github.com',
               linkedin: row.linkedin || 'https://linkedin.com',
@@ -47,7 +51,11 @@ const Hero = () => {
             loadedProfile = {
               name: parsed.name || profileInfo.name,
               subtitles: parsed.subtitles ? (Array.isArray(parsed.subtitles) ? parsed.subtitles : parsed.subtitles.split(',').map(s => s.trim())) : profileInfo.subtitles,
+              subtitles_id: parsed.subtitles_id ? (Array.isArray(parsed.subtitles_id) ? parsed.subtitles_id : parsed.subtitles_id.split(',').map(s => s.trim())) : null,
+              subtitles_en: parsed.subtitles_en ? (Array.isArray(parsed.subtitles_en) ? parsed.subtitles_en : parsed.subtitles_en.split(',').map(s => s.trim())) : null,
               bio: parsed.bio || profileInfo.bio,
+              bio_id: parsed.bio_id || null,
+              bio_en: parsed.bio_en || null,
               profile_image: parsed.profile_image || '/assets/images/profile3.jpg',
               github: parsed.github || 'https://github.com',
               linkedin: parsed.linkedin || 'https://linkedin.com',
@@ -66,7 +74,15 @@ const Hero = () => {
     fetchProfile()
   }, [])
 
-  const words = profile.subtitles || profileInfo.subtitles
+  const displayBio = lang === 'en'
+    ? (profile.bio_en || profile.bio || profileInfo.bio_en)
+    : (profile.bio_id || profile.bio || profileInfo.bio_id)
+
+  const rawSubtitles = lang === 'en'
+    ? (profile.subtitles_en || profile.subtitles || profileInfo.subtitles_en)
+    : (profile.subtitles_id || profile.subtitles || profileInfo.subtitles_id)
+
+  const words = Array.isArray(rawSubtitles) ? rawSubtitles : (typeof rawSubtitles === 'string' ? rawSubtitles.split(',').map(s => s.trim()) : profileInfo.subtitles)
   const [wordIndex, setWordIndex] = useState(0)
   const [currentText, setCurrentText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
@@ -124,7 +140,7 @@ const Hero = () => {
           <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold tracking-wider uppercase mb-6">
             {t('hero.welcome')}
           </span>
-          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 dark:white mb-4">
+          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">
             {t('hero.hi')} <br className="hidden sm:inline" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">
               {profile.name}
@@ -139,7 +155,7 @@ const Hero = () => {
           </div>
 
           <p className="text-slate-650 dark:text-slate-400 text-base sm:text-lg max-w-lg mb-8 mx-auto lg:mx-0 leading-relaxed">
-            {profile.bio}
+            {displayBio}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center lg:justify-start mb-10">

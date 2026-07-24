@@ -2,8 +2,14 @@ export const profileInfo = {
   name: "Natanael Ruswandi",
   title: "AI Developer & Mobile Developer",
   subtitles: ["AI Developer", "Computer Vision Enthusiast", "Mobile Developer"],
+  subtitles_id: ["Pengembang AI", "Penggemar Computer Vision", "Pengembang Aplikasi Mobile"],
+  subtitles_en: ["AI Developer", "Computer Vision Enthusiast", "Mobile Developer"],
   bio: "Creative Developer & Designer specializing in building beautiful, functional, and user-friendly digital experiences. Passionate about machine learning, pose estimation, and crafting premium UI/UX.",
+  bio_id: "Pengembang & Desainer Kreatif yang berfokus membangun pengalaman digital yang indah, fungsional, dan mudah digunakan. Memiliki passion tinggi pada Machine Learning, Computer Vision, dan Desain UI/UX modern.",
+  bio_en: "Creative Developer & Designer specializing in building beautiful, functional, and user-friendly digital experiences. Passionate about machine learning, pose estimation, and crafting premium UI/UX.",
   mission: "I am dedicated to building high-quality edge computer vision platforms and mobile interfaces that offer seamless workflows. I enjoy exploring algorithmic challenges and turning complex mathematical solutions into user-oriented products.",
+  mission_id: "Saya berdedikasi membangun platform Computer Vision dan antarmuka aplikasi berkualitas tinggi dengan alur kerja yang intuitif. Memiliki ketertarikan tinggi pada algoritma cerdas dan mengubah solusi matematika kompleks menjadi produk yang bermanfaat.",
+  mission_en: "I am dedicated to building high-quality edge computer vision platforms and mobile interfaces that offer seamless workflows. I enjoy exploring algorithmic challenges and turning complex mathematical solutions into user-oriented products.",
   years_exp: "3+",
   projects_count: "20+",
   education: [
@@ -15,6 +21,8 @@ export const profileInfo = {
     }
   ],
   careerGoals: "My ultimate goal is to pioneer solutions that bridge AI with interactive mobile and web applications, bringing state-of-the-art machine learning models into everyday utility.",
+  career_goals_id: "Tujuan utama saya adalah menciptakan solusi inovatif yang menjembatani AI dengan aplikasi mobile & web interaktif, sehingga model Machine Learning terkini dapat dimanfaatkan secara langsung oleh masyarakat.",
+  career_goals_en: "My ultimate goal is to pioneer solutions that bridge AI with interactive mobile and web applications, bringing state-of-the-art machine learning models into everyday utility.",
   cvUrl: "/assets/cv.pdf"
 };
 
