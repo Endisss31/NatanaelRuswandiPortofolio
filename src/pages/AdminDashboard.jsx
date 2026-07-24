@@ -670,9 +670,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
               </div>
               <div>
                 <h2 className="font-bold text-slate-900 dark:text-white leading-tight">Area Admin</h2>
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  {!isSupabaseConfigured ? 'Mode Preview' : 'Terhubung'}
-                </span>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className={`w-2 h-2 rounded-full ${isSupabaseConfigured ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider ${isSupabaseConfigured ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                    {isSupabaseConfigured ? 'Terhubung (Cloud)' : 'Mode Preview'}
+                  </span>
+                </div>
               </div>
             </div>
 
