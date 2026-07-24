@@ -72,10 +72,33 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
           supabase.from('certificates').select('*').order('created_at', { ascending: false })
         ])
 
-        if (pData.data) setProjects(pData.data)
-        if (sData.data) setSkills(sData.data)
-        if (eData.data) setExperiences(eData.data)
-        if (cData.data) setCertificates(cData.data)
+        if (pData.data && pData.data.length > 0) {
+          setProjects(pData.data)
+        } else {
+          const localP = localStorage.getItem('db_projects')
+          setProjects(localP ? JSON.parse(localP) : mockProjects)
+        }
+
+        if (sData.data && sData.data.length > 0) {
+          setSkills(sData.data)
+        } else {
+          const localS = localStorage.getItem('db_skills')
+          setSkills(localS ? JSON.parse(localS) : mockSkills)
+        }
+
+        if (eData.data && eData.data.length > 0) {
+          setExperiences(eData.data)
+        } else {
+          const localE = localStorage.getItem('db_experiences')
+          setExperiences(localE ? JSON.parse(localE) : mockExperiences)
+        }
+
+        if (cData.data && cData.data.length > 0) {
+          setCertificates(cData.data)
+        } else {
+          const localC = localStorage.getItem('db_certificates')
+          setCertificates(localC ? JSON.parse(localC) : mockCertificates)
+        }
 
         // Load profile safely (fallback to local if table doesn't exist yet)
         try {
@@ -296,25 +319,27 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     }
 
     try {
-      if (isSupabaseConfigured && supabase) {
-        if (editingId) {
-          const { error } = await supabase.from('projects').update(payload).eq('id', editingId)
-          if (error) throw error
-        } else {
-          const { error } = await supabase.from('projects').insert([payload])
-          if (error) throw error
-        }
+      let updated = []
+      if (editingId) {
+        updated = projects.map(p => p.id === editingId ? { ...p, ...payload } : p)
       } else {
-        // Local state handling
-        if (editingId) {
-          const updated = projects.map(p => p.id === editingId ? { ...p, ...payload } : p)
-          setProjects(updated)
-          persistLocalData('db_projects', updated)
-        } else {
-          const newProj = { ...payload, id: `p_local_${Date.now()}` }
-          const updated = [newProj, ...projects]
-          setProjects(updated)
-          persistLocalData('db_projects', updated)
+        const newProj = { ...payload, id: `p_local_${Date.now()}` }
+        updated = [newProj, ...projects]
+      }
+      setProjects(updated)
+      persistLocalData('db_projects', updated)
+
+      if (isSupabaseConfigured && supabase) {
+        try {
+          if (editingId) {
+            const { error } = await supabase.from('projects').update(payload).eq('id', editingId)
+            if (error) throw error
+          } else {
+            const { error } = await supabase.from('projects').insert([payload])
+            if (error) throw error
+          }
+        } catch (subErr) {
+          console.warn("Supabase project save notice:", subErr)
         }
       }
 
@@ -329,14 +354,16 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const deleteProject = async (id) => {
     if (!window.confirm('Delete this project?')) return
     try {
+      const updated = projects.filter(p => p.id !== id)
+      setProjects(updated)
+      persistLocalData('db_projects', updated)
+
       if (isSupabaseConfigured && supabase) {
-        const { error } = await supabase.from('projects').delete().eq('id', id)
-        if (error) throw error
-      } else {
-        const updated = projects.filter(p => p.id !== id)
-        setProjects(updated)
-        persistLocalData('db_projects', updated)
+        try {
+          await supabase.from('projects').delete().eq('id', id)
+        } catch (subErr) {}
       }
+
       showMsg('success', 'Project removed.')
       loadAllData()
     } catch (err) {
@@ -376,24 +403,27 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     }
 
     try {
-      if (isSupabaseConfigured && supabase) {
-        if (editingId) {
-          const { error } = await supabase.from('skills').update(payload).eq('id', editingId)
-          if (error) throw error
-        } else {
-          const { error } = await supabase.from('skills').insert([payload])
-          if (error) throw error
-        }
+      let updated = []
+      if (editingId) {
+        updated = skills.map(s => s.id === editingId ? { ...s, ...payload } : s)
       } else {
-        if (editingId) {
-          const updated = skills.map(s => s.id === editingId ? { ...s, ...payload } : s)
-          setSkills(updated)
-          persistLocalData('db_skills', updated)
-        } else {
-          const newSkill = { ...payload, id: `s_local_${Date.now()}` }
-          const updated = [...skills, newSkill]
-          setSkills(updated)
-          persistLocalData('db_skills', updated)
+        const newSkill = { ...payload, id: `s_local_${Date.now()}` }
+        updated = [...skills, newSkill]
+      }
+      setSkills(updated)
+      persistLocalData('db_skills', updated)
+
+      if (isSupabaseConfigured && supabase) {
+        try {
+          if (editingId) {
+            const { error } = await supabase.from('skills').update(payload).eq('id', editingId)
+            if (error) throw error
+          } else {
+            const { error } = await supabase.from('skills').insert([payload])
+            if (error) throw error
+          }
+        } catch (subErr) {
+          console.warn("Supabase skill save notice:", subErr)
         }
       }
 
@@ -408,14 +438,16 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const deleteSkill = async (id) => {
     if (!window.confirm('Delete this skill?')) return
     try {
+      const updated = skills.filter(s => s.id !== id)
+      setSkills(updated)
+      persistLocalData('db_skills', updated)
+
       if (isSupabaseConfigured && supabase) {
-        const { error } = await supabase.from('skills').delete().eq('id', id)
-        if (error) throw error
-      } else {
-        const updated = skills.filter(s => s.id !== id)
-        setSkills(updated)
-        persistLocalData('db_skills', updated)
+        try {
+          await supabase.from('skills').delete().eq('id', id)
+        } catch (subErr) {}
       }
+
       showMsg('success', 'Skill deleted.')
       loadAllData()
     } catch (err) {
@@ -445,24 +477,27 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     }
 
     try {
-      if (isSupabaseConfigured && supabase) {
-        if (editingId) {
-          const { error } = await supabase.from('experiences').update(payload).eq('id', editingId)
-          if (error) throw error
-        } else {
-          const { error } = await supabase.from('experiences').insert([payload])
-          if (error) throw error
-        }
+      let updated = []
+      if (editingId) {
+        updated = experiences.map(ex => ex.id === editingId ? { ...ex, ...payload } : ex)
       } else {
-        if (editingId) {
-          const updated = experiences.map(ex => ex.id === editingId ? { ...ex, ...payload } : ex)
-          setExperiences(updated)
-          persistLocalData('db_experiences', updated)
-        } else {
-          const newExp = { ...payload, id: `ex_local_${Date.now()}` }
-          const updated = [newExp, ...experiences]
-          setExperiences(updated)
-          persistLocalData('db_experiences', updated)
+        const newExp = { ...payload, id: `ex_local_${Date.now()}` }
+        updated = [newExp, ...experiences]
+      }
+      setExperiences(updated)
+      persistLocalData('db_experiences', updated)
+
+      if (isSupabaseConfigured && supabase) {
+        try {
+          if (editingId) {
+            const { error } = await supabase.from('experiences').update(payload).eq('id', editingId)
+            if (error) throw error
+          } else {
+            const { error } = await supabase.from('experiences').insert([payload])
+            if (error) throw error
+          }
+        } catch (subErr) {
+          console.warn("Supabase experience save notice:", subErr)
         }
       }
 
@@ -513,46 +548,56 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     }
 
     try {
-      if (isSupabaseConfigured && supabase) {
-        if (editingId) {
-          const { error } = await supabase.from('certificates').update(payload).eq('id', editingId)
-          if (error) throw error
-        } else {
-          const { error } = await supabase.from('certificates').insert([payload])
-          if (error) throw error
-        }
+      let updated = []
+      if (editingId) {
+        updated = certificates.map(c => c.id === editingId ? { ...c, ...payload } : c)
       } else {
-        if (editingId) {
-          const updated = certificates.map(c => c.id === editingId ? { ...c, ...payload } : c)
-          setCertificates(updated)
-          persistLocalData('db_certificates', updated)
-        } else {
-          const newCert = { ...payload, id: `c_local_${Date.now()}` }
-          const updated = [newCert, ...certificates]
-          setCertificates(updated)
-          persistLocalData('db_certificates', updated)
-        }
+        const newCert = { ...payload, id: `c_local_${Date.now()}` }
+        updated = [newCert, ...certificates]
       }
 
-      showMsg('success', 'Certificate stored successfully.')
+      // Always update local state and localStorage
+      setCertificates(updated)
+      persistLocalData('db_certificates', updated)
+
+      if (isSupabaseConfigured && supabase) {
+        try {
+          if (editingId) {
+            const { error } = await supabase.from('certificates').update(payload).eq('id', editingId)
+            if (error) throw error
+          } else {
+            const { error } = await supabase.from('certificates').insert([payload])
+            if (error) throw error
+          }
+          showMsg('success', 'Certificate saved successfully to database & local!')
+        } catch (subErr) {
+          console.warn("Supabase certificate save notice:", subErr)
+          showMsg('success', "Certificate saved locally! (Catatan: Buat tabel 'certificates' di Supabase SQL untuk simpan cloud)")
+        }
+      } else {
+        showMsg('success', 'Certificate stored locally.')
+      }
+
       resetCertForm()
       loadAllData()
     } catch (err) {
-      showMsg('error', 'Failed to store certificate.')
+      showMsg('error', err.message || 'Failed to store certificate.')
     }
   }
 
   const deleteCertificate = async (id) => {
     if (!window.confirm('Delete this certificate?')) return
     try {
+      const updated = certificates.filter(c => c.id !== id)
+      setCertificates(updated)
+      persistLocalData('db_certificates', updated)
+
       if (isSupabaseConfigured && supabase) {
-        const { error } = await supabase.from('certificates').delete().eq('id', id)
-        if (error) throw error
-      } else {
-        const updated = certificates.filter(c => c.id !== id)
-        setCertificates(updated)
-        persistLocalData('db_certificates', updated)
+        try {
+          await supabase.from('certificates').delete().eq('id', id)
+        } catch (subErr) {}
       }
+
       showMsg('success', 'Certificate removed.')
       loadAllData()
     } catch (err) {

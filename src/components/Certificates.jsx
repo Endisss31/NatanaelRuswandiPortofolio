@@ -29,7 +29,7 @@ const Certificates = () => {
         console.error("Error loading certificates from database, using fallback:", err)
       }
 
-      if (!loaded) {
+      if (!loaded || loaded.length === 0) {
         const local = localStorage.getItem('db_certificates')
         if (local) {
           try {
@@ -41,7 +41,7 @@ const Certificates = () => {
         }
       }
 
-      setCertificates(loaded || mockCertificates)
+      setCertificates((loaded && loaded.length > 0) ? loaded : mockCertificates)
       setLoading(false)
     }
 
