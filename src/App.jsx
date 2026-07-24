@@ -15,8 +15,11 @@ import Contact from './components/Contact'
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard'
 
+import { LanguageProvider } from './context/LanguageContext'
+
 // Theme Provider and Page Layout
 const MainLayout = ({ darkMode, setDarkMode }) => {
+  const { t } = useLanguage()
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
       {/* Background Blobs */}
@@ -56,7 +59,7 @@ const MainLayout = ({ darkMode, setDarkMode }) => {
       </main>
 
       <footer className="py-8 text-center text-sm text-slate-400 dark:text-slate-500 border-t border-slate-200/50 dark:border-white/5">
-        <p>&copy; {new Date().getFullYear()} Natanael Ruswandi. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Natanael Ruswandi. {t('footer.rights')}</p>
       </footer>
     </div>
   )
@@ -126,24 +129,26 @@ function App() {
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<MainLayout darkMode={darkMode} setDarkMode={handleSetDarkMode} />} />
-        <Route 
-          path="/admin/login" 
-          element={
-            session ? <Navigate to="/admin/dashboard" replace /> : <AdminLogin darkMode={darkMode} setDarkMode={handleSetDarkMode} />
-          } 
-        />
-        <Route 
-          path="/admin/dashboard" 
-          element={
-            session ? <AdminDashboard session={session} darkMode={darkMode} setDarkMode={handleSetDarkMode} /> : <Navigate to="/admin/login" replace />
-          } 
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+    <LanguageProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<MainLayout darkMode={darkMode} setDarkMode={handleSetDarkMode} />} />
+          <Route 
+            path="/admin/login" 
+            element={
+              session ? <Navigate to="/admin/dashboard" replace /> : <AdminLogin darkMode={darkMode} setDarkMode={handleSetDarkMode} />
+            } 
+          />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              session ? <AdminDashboard session={session} darkMode={darkMode} setDarkMode={handleSetDarkMode} /> : <Navigate to="/admin/login" replace />
+            } 
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </LanguageProvider>
   )
 }
 

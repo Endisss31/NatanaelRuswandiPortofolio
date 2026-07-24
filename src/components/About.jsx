@@ -3,8 +3,10 @@ import { motion } from 'framer-motion'
 import { GraduationCap, Target, Award, Milestone } from 'lucide-react'
 import { profileInfo } from '../data/mockData'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import { useLanguage } from '../context/LanguageContext'
 
 const About = () => {
+  const { t } = useLanguage()
   const [profile, setProfile] = useState(() => {
     const local = localStorage.getItem('db_profile')
     return local ? JSON.parse(local) : profileInfo
@@ -60,10 +62,10 @@ const About = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-8">
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">About Me</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">{t('about.title')}</h2>
         <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full mb-6"></div>
         <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg font-semibold">
-          Here is a brief summary of my educational background, career goals, and professional trajectory.
+          {t('about.subtitle')}
         </p>
       </div>
 
@@ -81,7 +83,7 @@ const About = () => {
           <div className="glass-card">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
               <Milestone size={20} className="text-blue-500" />
-              My Mission
+              {t('about.missionTitle')}
             </h3>
             <p className="text-slate-650 dark:text-slate-300 leading-relaxed mb-6">
               {profile.mission || profileInfo.mission}
@@ -89,11 +91,11 @@ const About = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-slate-100/50 dark:bg-slate-900/60 border border-slate-200 dark:border-white/5 rounded-xl text-center">
                 <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{profile.years_exp || "3+"}</div>
-                <div className="text-xs text-slate-500 dark:text-slate-500 font-bold uppercase tracking-wider mt-1">Years Projects</div>
+                <div className="text-xs text-slate-500 dark:text-slate-500 font-bold uppercase tracking-wider mt-1">{t('about.yearsProjects')}</div>
               </div>
               <div className="p-4 bg-slate-100/50 dark:bg-slate-900/60 border border-slate-200 dark:border-white/5 rounded-xl text-center">
                 <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{profile.projects_count || "20+"}</div>
-                <div className="text-xs text-slate-500 dark:text-slate-500 font-bold uppercase tracking-wider mt-1">Completed Apps</div>
+                <div className="text-xs text-slate-500 dark:text-slate-500 font-bold uppercase tracking-wider mt-1">{t('about.completedApps')}</div>
               </div>
             </div>
           </div>
@@ -102,7 +104,7 @@ const About = () => {
           <div className="glass-card">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
               <Target size={20} className="text-indigo-500" />
-              Career Focus
+              {t('about.careerFocusTitle')}
             </h3>
             <p className="text-slate-650 dark:text-slate-300 leading-relaxed">
               {profile.careerGoals || profile.career_goals || profileInfo.careerGoals}
@@ -121,7 +123,7 @@ const About = () => {
           <div className="glass-card">
             <h3 className="text-xl font-bold mb-8 flex items-center gap-2 text-slate-900 dark:text-white">
               <GraduationCap size={22} className="text-purple-500" />
-              Education History
+              {t('about.educationHistoryTitle')}
             </h3>
 
             <div className="relative border-l border-slate-200 dark:border-slate-800 ml-3 pl-6 space-y-8">
@@ -155,9 +157,9 @@ const About = () => {
               <Award size={24} />
             </div>
             <div>
-              <h4 className="font-bold text-slate-900 dark:text-white mb-0.5">Looking for a collaborator?</h4>
+              <h4 className="font-bold text-slate-900 dark:text-white mb-0.5">{t('about.collaboratorTitle')}</h4>
               <p className="text-sm text-slate-555 dark:text-slate-400 leading-relaxed">
-                I am open to research partnerships, open-source projects, and part-time/full-time AI engineering roles.
+                {t('about.collaboratorText')}
               </p>
             </div>
           </div>

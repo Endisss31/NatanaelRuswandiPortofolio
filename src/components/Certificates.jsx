@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Award, Calendar, ExternalLink, Eye, X } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { mockCertificates } from '../data/mockData'
+import { useLanguage } from '../context/LanguageContext'
 
 const Certificates = () => {
+  const { t } = useLanguage()
   const [certificates, setCertificates] = useState([])
   const [loading, setLoading] = useState(true)
   const [previewImage, setPreviewImage] = useState(null)
@@ -38,10 +40,10 @@ const Certificates = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-8">
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">Certificates & Licenses</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">{t('certificates.title')}</h2>
         <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full mb-6"></div>
         <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg font-semibold">
-          My verified professional licenses and industry certifications.
+          {t('certificates.subtitle')}
         </p>
       </div>
 

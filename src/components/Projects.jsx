@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Github, ExternalLink, X, ArrowUpRight } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { mockProjects } from '../data/mockData'
+import { useLanguage } from '../context/LanguageContext'
 
 const Projects = () => {
+  const { t } = useLanguage()
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState('All')
@@ -36,7 +38,7 @@ const Projects = () => {
     fetchProjects()
   }, [])
 
-  const filters = ['All', 'AI', 'Mobile', 'Web']
+  const filters = ['All', 'Web', 'Artificial Intelligence', 'Mobile']
 
   const filteredProjects = activeFilter === 'All'
     ? projects
@@ -45,10 +47,10 @@ const Projects = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-8">
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">Featured Projects</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">{t('projects.title')}</h2>
         <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full mb-6"></div>
         <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg font-semibold">
-          A selection of my recent works ranging from edge computer vision models to responsive web applications.
+          {t('projects.subtitle')}
         </p>
       </div>
 
@@ -64,7 +66,7 @@ const Projects = () => {
                 : 'bg-white dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            {filter}
+            {filter === 'All' ? t('projects.allCategories') : filter}
           </button>
         ))}
       </div>

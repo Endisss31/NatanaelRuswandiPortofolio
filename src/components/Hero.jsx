@@ -3,8 +3,10 @@ import { motion } from 'framer-motion'
 import { Github, Linkedin, Instagram, Mail, FileDown, ArrowRight } from 'lucide-react'
 import { profileInfo } from '../data/mockData'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import { useLanguage } from '../context/LanguageContext'
 
 const Hero = () => {
+  const { t } = useLanguage()
   const [profile, setProfile] = useState(() => {
     const local = localStorage.getItem('db_profile')
     return local ? JSON.parse(local) : profileInfo
@@ -120,17 +122,17 @@ const Hero = () => {
           transition={{ duration: 0.8 }}
         >
           <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold tracking-wider uppercase mb-6">
-            Welcome to my portfolio
+            {t('hero.welcome')}
           </span>
-          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">
-            Hi, I'm <br className="hidden sm:inline" />
+          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 dark:white mb-4">
+            {t('hero.hi')} <br className="hidden sm:inline" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">
               {profile.name}
             </span>
           </h1>
 
           <div className="h-12 flex items-center justify-center lg:justify-start text-xl sm:text-2xl text-slate-700 dark:text-slate-300 font-semibold mb-6">
-            <span>Creative&nbsp;</span>
+            <span>{t('hero.creative')}&nbsp;</span>
             <span className="text-blue-600 dark:text-blue-400 font-bold border-r-2 border-blue-500 pr-1 animate-pulse">
               {currentText || '\u00A0'}
             </span>
@@ -145,7 +147,7 @@ const Hero = () => {
               onClick={() => scrollSection('projects')}
               className="group px-8 py-3.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold flex items-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5 duration-300 w-full sm:w-auto justify-center"
             >
-              View Projects
+              {t('hero.viewProjects')}
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
             <a 
@@ -153,7 +155,7 @@ const Hero = () => {
               download
               className="px-8 py-3.5 rounded-full glass-panel hover:bg-slate-100 dark:hover:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200/60 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 font-semibold flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 duration-300 w-full sm:w-auto"
             >
-              Download CV
+              {t('hero.downloadCv')}
               <FileDown size={18} />
             </a>
           </div>

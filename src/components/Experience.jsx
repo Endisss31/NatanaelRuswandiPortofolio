@@ -3,8 +3,10 @@ import { motion } from 'framer-motion'
 import { Briefcase, FlaskConical, Users2, Laptop } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { mockExperiences } from '../data/mockData'
+import { useLanguage } from '../context/LanguageContext'
 
 const Experience = () => {
+  const { t } = useLanguage()
   const [experiences, setExperiences] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -69,10 +71,10 @@ const Experience = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-8">
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">Work & Leadership Experience</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">{t('experience.title')}</h2>
         <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full mb-6"></div>
         <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg font-semibold">
-          My professional milestones, internships, student organizations, and research projects.
+          {t('experience.subtitle')}
         </p>
       </div>
 

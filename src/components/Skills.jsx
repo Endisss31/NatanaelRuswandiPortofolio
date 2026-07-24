@@ -3,8 +3,10 @@ import { motion } from 'framer-motion'
 import { Code, Server, BrainCircuit, Smartphone, Wrench } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { mockSkills } from '../data/mockData'
+import { useLanguage } from '../context/LanguageContext'
 
 const Skills = () => {
+  const { t } = useLanguage()
   const [skills, setSkills] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('All')
@@ -36,7 +38,7 @@ const Skills = () => {
   }, [])
 
   const categories = [
-    { id: 'All', name: 'All Skills', icon: null },
+    { id: 'All', name: t('skills.allCategories'), icon: null },
     { id: 'Frontend', name: 'Frontend', icon: <Code size={16} /> },
     { id: 'Backend', name: 'Backend', icon: <Server size={16} /> },
     { id: 'Artificial Intelligence', name: 'AI & Vision', icon: <BrainCircuit size={16} /> },
@@ -51,10 +53,10 @@ const Skills = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-8">
       <div className="text-center max-w-3xl mx-auto mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">Skills & Technical Proficiencies</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">{t('skills.title')}</h2>
         <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full mb-6"></div>
         <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg font-semibold">
-          My primary development skill set and proficiency levels. Filter by category to view detailed items.
+          {t('skills.subtitle')}
         </p>
       </div>
 
