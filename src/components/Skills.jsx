@@ -13,6 +13,7 @@ const Skills = () => {
 
   useEffect(() => {
     const fetchSkills = async () => {
+      let loadedSkills = null
       try {
         if (isSupabaseConfigured && supabase) {
           const { data, error } = await supabase
@@ -20,18 +21,28 @@ const Skills = () => {
             .select('*')
             .order('created_at', { ascending: true })
 
-          if (error) throw error
-          setSkills(data || [])
-          setLoading(false)
-          return
+          if (!error && data && data.length > 0) {
+            loadedSkills = data
+          }
         }
       } catch (err) {
         console.error("Error loading skills from database, using fallback:", err)
-      } finally {
-        setLoading(false)
       }
-      // Fallback only if Supabase is NOT configured or threw an error
-      setSkills(mockSkills)
+
+      if (!loadedSkills) {
+        const local = localStorage.getItem('db_skills')
+        if (local) {
+          try {
+            const parsed = JSON.parse(local)
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              loadedSkills = parsed
+            }
+          } catch (e) {}
+        }
+      }
+
+      setSkills(loadedSkills || mockSkills)
+      setLoading(false)
     }
 
     fetchSkills()

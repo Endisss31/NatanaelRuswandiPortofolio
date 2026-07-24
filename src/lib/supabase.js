@@ -4,12 +4,15 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 
 // Check if credentials are valid/provided before creating the client
-export const isSupabaseConfigured =
+export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
-  supabaseUrl !== 'https://vfiukpcoerdahpnydahk.supabase.co' &&
+  supabaseUrl.startsWith('https://') &&
+  supabaseUrl !== 'https://your-project-id.supabase.co' &&
   supabaseAnonKey &&
-  supabaseAnonKey !== 'sb_publishable_oEUXApGED0omYJMdB3O9tA_No3h-gY_';
+  supabaseAnonKey !== 'your-supabase-anon-key'
+)
 
 export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+  : null
+

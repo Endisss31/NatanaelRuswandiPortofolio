@@ -14,6 +14,7 @@ const Projects = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
+      let loaded = null
       try {
         if (isSupabaseConfigured && supabase) {
           const { data, error } = await supabase
@@ -21,18 +22,28 @@ const Projects = () => {
             .select('*')
             .order('created_at', { ascending: false })
 
-          if (error) throw error
-          setProjects(data || [])
-          setLoading(false)
-          return
+          if (!error && data && data.length > 0) {
+            loaded = data
+          }
         }
       } catch (err) {
         console.error("Error loading projects from database, using fallback:", err)
-      } finally {
-        setLoading(false)
       }
-      // Fallback only if Supabase is NOT configured or threw an error
-      setProjects(mockProjects)
+
+      if (!loaded) {
+        const local = localStorage.getItem('db_projects')
+        if (local) {
+          try {
+            const parsed = JSON.parse(local)
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              loaded = parsed
+            }
+          } catch (e) {}
+        }
+      }
+
+      setProjects(loaded || mockProjects)
+      setLoading(false)
     }
 
     fetchProjects()

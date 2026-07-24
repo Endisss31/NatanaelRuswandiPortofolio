@@ -12,6 +12,7 @@ const Experience = () => {
 
   useEffect(() => {
     const fetchExperiences = async () => {
+      let loaded = null
       try {
         if (isSupabaseConfigured && supabase) {
           const { data, error } = await supabase
@@ -19,18 +20,28 @@ const Experience = () => {
             .select('*')
             .order('start_date', { ascending: false })
 
-          if (error) throw error
-          setExperiences(data || [])
-          setLoading(false)
-          return
+          if (!error && data && data.length > 0) {
+            loaded = data
+          }
         }
       } catch (err) {
         console.error("Error loading experiences from database, using fallback:", err)
-      } finally {
-        setLoading(false)
       }
-      // Fallback only if Supabase is NOT configured or threw an error
-      setExperiences(mockExperiences)
+
+      if (!loaded) {
+        const local = localStorage.getItem('db_experiences')
+        if (local) {
+          try {
+            const parsed = JSON.parse(local)
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              loaded = parsed
+            }
+          } catch (e) {}
+        }
+      }
+
+      setExperiences(loaded || mockExperiences)
+      setLoading(false)
     }
 
     fetchExperiences()

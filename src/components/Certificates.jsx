@@ -13,6 +13,7 @@ const Certificates = () => {
 
   useEffect(() => {
     const fetchCertificates = async () => {
+      let loaded = null
       try {
         if (isSupabaseConfigured && supabase) {
           const { data, error } = await supabase
@@ -20,18 +21,28 @@ const Certificates = () => {
             .select('*')
             .order('created_at', { ascending: false })
 
-          if (error) throw error
-          setCertificates(data || [])
-          setLoading(false)
-          return
+          if (!error && data && data.length > 0) {
+            loaded = data
+          }
         }
       } catch (err) {
         console.error("Error loading certificates from database, using fallback:", err)
-      } finally {
-        setLoading(false)
       }
-      // Fallback only if Supabase is NOT configured or threw an error
-      setCertificates(mockCertificates)
+
+      if (!loaded) {
+        const local = localStorage.getItem('db_certificates')
+        if (local) {
+          try {
+            const parsed = JSON.parse(local)
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              loaded = parsed
+            }
+          } catch (e) {}
+        }
+      }
+
+      setCertificates(loaded || mockCertificates)
+      setLoading(false)
     }
 
     fetchCertificates()
