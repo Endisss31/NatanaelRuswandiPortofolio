@@ -1,9 +1,62 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { GraduationCap, Target, Award, Milestone } from 'lucide-react'
 import { profileInfo } from '../data/mockData'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 
 const About = () => {
+  const [profile, setProfile] = useState(() => {
+    const local = localStorage.getItem('db_profile')
+    return local ? JSON.parse(local) : profileInfo
+  })
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      let loadedProfile = null
+
+      try {
+        if (isSupabaseConfigured && supabase) {
+          const { data, error } = await supabase.from('profile').select('*').limit(1)
+          if (!error && data && data.length > 0) {
+            const row = data[0]
+            loadedProfile = {
+              mission: row.mission || profileInfo.mission,
+              years_exp: row.years_exp || profileInfo.years_exp || "3+",
+              projects_count: row.projects_count || profileInfo.projects_count || "20+",
+              careerGoals: row.career_goals || row.careerGoals || profileInfo.careerGoals,
+              education: row.education ? (typeof row.education === 'string' ? JSON.parse(row.education) : row.education) : profileInfo.education
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error loading about profile:", err)
+      }
+
+      if (!loadedProfile) {
+        const local = localStorage.getItem('db_profile')
+        if (local) {
+          try {
+            const parsed = JSON.parse(local)
+            loadedProfile = {
+              mission: parsed.mission || profileInfo.mission,
+              years_exp: parsed.years_exp || profileInfo.years_exp || "3+",
+              projects_count: parsed.projects_count || profileInfo.projects_count || "20+",
+              careerGoals: parsed.career_goals || parsed.careerGoals || profileInfo.careerGoals,
+              education: parsed.education || profileInfo.education
+            }
+          } catch (e) {}
+        }
+      }
+
+      if (loadedProfile) {
+        setProfile((prev) => ({ ...prev, ...loadedProfile }))
+      }
+    }
+    fetchProfile()
+  }, [])
+
+  const educationList = profile.education && profile.education.length > 0 ? profile.education : profileInfo.education
+
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-8">
       <div className="text-center max-w-3xl mx-auto mb-16">
@@ -31,15 +84,15 @@ const About = () => {
               My Mission
             </h3>
             <p className="text-slate-650 dark:text-slate-300 leading-relaxed mb-6">
-              I am dedicated to building high-quality edge computer vision platforms and mobile interfaces that offer seamless workflows. I enjoy exploring algorithmic challenges and turning complex mathematical solutions into user-oriented products.
+              {profile.mission || profileInfo.mission}
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-slate-100/50 dark:bg-slate-900/60 border border-slate-200 dark:border-white/5 rounded-xl text-center">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">3+</div>
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{profile.years_exp || "3+"}</div>
                 <div className="text-xs text-slate-500 dark:text-slate-500 font-bold uppercase tracking-wider mt-1">Years Projects</div>
               </div>
               <div className="p-4 bg-slate-100/50 dark:bg-slate-900/60 border border-slate-200 dark:border-white/5 rounded-xl text-center">
-                <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">20+</div>
+                <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{profile.projects_count || "20+"}</div>
                 <div className="text-xs text-slate-500 dark:text-slate-500 font-bold uppercase tracking-wider mt-1">Completed Apps</div>
               </div>
             </div>
@@ -52,7 +105,7 @@ const About = () => {
               Career Focus
             </h3>
             <p className="text-slate-650 dark:text-slate-300 leading-relaxed">
-              {profileInfo.careerGoals}
+              {profile.careerGoals || profile.career_goals || profileInfo.careerGoals}
             </p>
           </div>
         </motion.div>
@@ -72,7 +125,7 @@ const About = () => {
             </h3>
 
             <div className="relative border-l border-slate-200 dark:border-slate-800 ml-3 pl-6 space-y-8">
-              {profileInfo.education.map((edu, idx) => (
+              {educationList.map((edu, idx) => (
                 <div key={idx} className="relative group">
                   {/* Timeline Dot */}
                   <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-slate-50 dark:bg-slate-950 border-2 border-purple-500 group-hover:scale-125 transition-transform duration-300"></div>

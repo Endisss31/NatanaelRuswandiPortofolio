@@ -3,6 +3,9 @@ export const profileInfo = {
   title: "AI Developer & Mobile Developer",
   subtitles: ["AI Developer", "Computer Vision Enthusiast", "Mobile Developer"],
   bio: "Creative Developer & Designer specializing in building beautiful, functional, and user-friendly digital experiences. Passionate about machine learning, pose estimation, and crafting premium UI/UX.",
+  mission: "I am dedicated to building high-quality edge computer vision platforms and mobile interfaces that offer seamless workflows. I enjoy exploring algorithmic challenges and turning complex mathematical solutions into user-oriented products.",
+  years_exp: "3+",
+  projects_count: "20+",
   education: [
     {
       degree: "Bachelor of Computer Science",

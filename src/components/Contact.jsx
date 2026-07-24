@@ -28,10 +28,10 @@ const Contact = () => {
         const { error } = await supabase
           .from('messages')
           .insert([
-            { 
-              name: formData.name, 
-              email: formData.email, 
-              message: formData.message 
+            {
+              name: formData.name,
+              email: formData.email,
+              message: formData.message
             }
           ])
 
@@ -39,7 +39,7 @@ const Contact = () => {
           console.warn("Supabase insert error (table 'messages' might need to be created):", error)
         }
       }
-      
+
       // Simulate network request delays
       await new Promise((resolve) => setTimeout(resolve, 1200))
       setStatus('success')
@@ -63,7 +63,7 @@ const Contact = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start max-w-5xl mx-auto">
         {/* Contact details */}
-        <motion.div 
+        <motion.div
           className="lg:col-span-5 space-y-6"
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -72,7 +72,7 @@ const Contact = () => {
         >
           <div className="glass-card">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Contact Channels</h3>
-            
+
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 shadow-sm">
@@ -80,11 +80,11 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-slate-400">Email Address</h4>
-                  <a 
-                    href="mailto:natanael.ruswandi@example.com" 
+                  <a
+                    href="mailto:[EMAIL_ADDRESS]"
                     className="text-slate-800 hover:text-blue-650 dark:text-white dark:hover:text-blue-400 transition-colors font-semibold text-sm sm:text-base break-all"
                   >
-                    natanael.ruswandi@example.com
+                    [EMAIL_ADDRESS]
                   </a>
                 </div>
               </div>
@@ -105,7 +105,7 @@ const Contact = () => {
         </motion.div>
 
         {/* Contact form */}
-        <motion.div 
+        <motion.div
           className="lg:col-span-7"
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -114,7 +114,7 @@ const Contact = () => {
         >
           <div className="glass-card">
             <form onSubmit={handleSubmit} className="space-y-5">
-              
+
               {/* Name */}
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">

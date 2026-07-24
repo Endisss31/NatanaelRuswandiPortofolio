@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   FolderGit2, Award, Briefcase, Code2, FileUp, LogOut, 
-  Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle2, ShieldAlert, Sun, Moon, User, Image, Sparkles
+  Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle2, ShieldAlert, Sun, Moon, User, Image, Sparkles, GraduationCap
 } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { mockProjects, mockSkills, mockExperiences, mockCertificates, profileInfo } from '../data/mockData'
@@ -18,7 +18,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const [certificates, setCertificates] = useState([])
   const [cvUrl, setCvUrl] = useState('')
 
-  // Hero / Profile State
+  // Hero / Profile / About State
   const [heroForm, setHeroForm] = useState({
     name: profileInfo.name,
     subtitles: profileInfo.subtitles.join(', '),
@@ -27,7 +27,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     github: 'https://github.com',
     linkedin: 'https://linkedin.com',
     instagram: 'https://instagram.com',
-    email: 'mailto:your-email@example.com'
+    email: 'mailto:your-email@example.com',
+    mission: profileInfo.mission || '',
+    years_exp: profileInfo.years_exp || '3+',
+    projects_count: profileInfo.projects_count || '20+',
+    career_goals: profileInfo.careerGoals || '',
+    education: profileInfo.education || []
   })
 
   // UI Flow States
@@ -76,7 +81,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
               github: prof.github || 'https://github.com',
               linkedin: prof.linkedin || 'https://linkedin.com',
               instagram: prof.instagram || 'https://instagram.com',
-              email: prof.email || 'mailto:your-email@example.com'
+              email: prof.email || 'mailto:your-email@example.com',
+              mission: prof.mission || profileInfo.mission,
+              years_exp: prof.years_exp || '3+',
+              projects_count: prof.projects_count || '20+',
+              career_goals: prof.career_goals || prof.careerGoals || profileInfo.careerGoals,
+              education: prof.education ? (typeof prof.education === 'string' ? JSON.parse(prof.education) : prof.education) : profileInfo.education
             })
           } else {
             const localProfile = localStorage.getItem('db_profile')
@@ -90,7 +100,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                 github: parsed.github || 'https://github.com',
                 linkedin: parsed.linkedin || 'https://linkedin.com',
                 instagram: parsed.instagram || 'https://instagram.com',
-                email: parsed.email || 'mailto:your-email@example.com'
+                email: parsed.email || 'mailto:your-email@example.com',
+                mission: parsed.mission || profileInfo.mission,
+                years_exp: parsed.years_exp || '3+',
+                projects_count: parsed.projects_count || '20+',
+                career_goals: parsed.career_goals || parsed.careerGoals || profileInfo.careerGoals,
+                education: parsed.education || profileInfo.education
               })
             }
           }
@@ -123,7 +138,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
             github: parsed.github || 'https://github.com',
             linkedin: parsed.linkedin || 'https://linkedin.com',
             instagram: parsed.instagram || 'https://instagram.com',
-            email: parsed.email || 'mailto:your-email@example.com'
+            email: parsed.email || 'mailto:your-email@example.com',
+            mission: parsed.mission || profileInfo.mission,
+            years_exp: parsed.years_exp || '3+',
+            projects_count: parsed.projects_count || '20+',
+            career_goals: parsed.career_goals || parsed.careerGoals || profileInfo.careerGoals,
+            education: parsed.education || profileInfo.education
           })
         }
       }
@@ -135,18 +155,46 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     }
   }
 
+  // Education item handlers
+  const addEduItem = () => {
+    setHeroForm(prev => ({
+      ...prev,
+      education: [...(prev.education || []), { degree: '', institution: '', period: '', description: '' }]
+    }))
+  }
+
+  const updateEduItem = (index, field, value) => {
+    setHeroForm(prev => {
+      const updated = [...(prev.education || [])]
+      updated[index] = { ...updated[index], [field]: value }
+      return { ...prev, education: updated }
+    })
+  }
+
+  const removeEduItem = (index) => {
+    setHeroForm(prev => ({
+      ...prev,
+      education: (prev.education || []).filter((_, i) => i !== index)
+    }))
+  }
+
   const saveHeroProfile = async (e) => {
     e.preventDefault()
     try {
       const profileData = {
         name: heroForm.name,
-        subtitles: heroForm.subtitles.split(',').map(s => s.trim()),
+        subtitles: typeof heroForm.subtitles === 'string' ? heroForm.subtitles.split(',').map(s => s.trim()) : heroForm.subtitles,
         bio: heroForm.bio,
         profile_image: heroForm.profile_image,
         github: heroForm.github,
         linkedin: heroForm.linkedin,
         instagram: heroForm.instagram,
-        email: heroForm.email
+        email: heroForm.email,
+        mission: heroForm.mission,
+        years_exp: heroForm.years_exp,
+        projects_count: heroForm.projects_count,
+        career_goals: heroForm.career_goals,
+        education: heroForm.education
       }
 
       // Always persist to localStorage for immediate website update
@@ -161,12 +209,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
           }
           throw error
         }
-        showMsg('success', 'Hero profile saved successfully to Supabase and Local Storage!')
+        showMsg('success', 'Profile, About, & Education saved successfully!')
       } else {
-        showMsg('success', 'Hero profile saved locally (Preview mode).')
+        showMsg('success', 'Profile, About, & Education saved locally (Preview mode).')
       }
     } catch (err) {
-      showMsg('error', err.message || 'Failed to save hero profile.')
+      showMsg('error', err.message || 'Failed to save profile.')
     }
   }
 
@@ -567,7 +615,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
           {/* Navigation Buttons */}
           <nav className="space-y-1">
             {[
-              { id: 'hero', label: 'Hero / Profile', icon: <User size={18} /> },
+              { id: 'hero', label: 'Profile & About Me', icon: <User size={18} /> },
               { id: 'projects', label: 'Projects', icon: <FolderGit2 size={18} /> },
               { id: 'skills', label: 'Skills', icon: <Code2 size={18} /> },
               { id: 'experiences', label: 'Experiences', icon: <Briefcase size={18} /> },
@@ -636,7 +684,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
           <div className="space-y-8">
             
             {/* ========================================================
-               HERO & PROFILE VIEW
+               PROFILE, ABOUT & EDUCATION VIEW
                ======================================================== */}
             {activeTab === 'hero' && (
               <div className="max-w-4xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm dark:shadow-none space-y-6">
@@ -644,15 +692,17 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                       <Sparkles className="text-blue-500" size={20} />
-                      Hero & Profile Manager
+                      Profile, About Me & Education Manager
                     </h3>
                     <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-                      Customize your main hero landing section, bio, roles, profile image, and social links.
+                      Customize your hero section, mission, career goals, stats, and education history.
                     </p>
                   </div>
                 </div>
 
                 <form onSubmit={saveHeroProfile} className="space-y-6">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">1. Hero Section Details</h4>
+                  
                   {/* Name & Roles */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -687,7 +737,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                   {/* Bio Description */}
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
-                      Bio / Short Introduction
+                      Hero Bio / Short Introduction
                     </label>
                     <textarea 
                       value={heroForm.bio} 
@@ -778,13 +828,149 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                     </div>
                   </div>
 
-                  <div className="pt-4">
+                  {/* ================= ABOUT ME SECTION ================= */}
+                  <div className="border-t border-slate-200 dark:border-slate-800 pt-6 space-y-6">
+                    <h4 className="text-sm font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">2. About Me & Career Focus</h4>
+
+                    {/* Mission */}
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                        My Mission Statement
+                      </label>
+                      <textarea 
+                        value={heroForm.mission} 
+                        onChange={(e) => setHeroForm({...heroForm, mission: e.target.value})}
+                        rows="3" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                        placeholder="I am dedicated to building high-quality platforms..."
+                      />
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Years Projects Stat</label>
+                        <input 
+                          type="text" 
+                          value={heroForm.years_exp} 
+                          onChange={(e) => setHeroForm({...heroForm, years_exp: e.target.value})}
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                          placeholder="3+" 
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Completed Apps Stat</label>
+                        <input 
+                          type="text" 
+                          value={heroForm.projects_count} 
+                          onChange={(e) => setHeroForm({...heroForm, projects_count: e.target.value})}
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
+                          placeholder="20+" 
+                        />
+                      </div>
+                    </div>
+
+                    {/* Career Goals */}
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                        Career Focus / Goals
+                      </label>
+                      <textarea 
+                        value={heroForm.career_goals} 
+                        onChange={(e) => setHeroForm({...heroForm, career_goals: e.target.value})}
+                        rows="3" 
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                        placeholder="My ultimate goal is to pioneer solutions..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* ================= EDUCATION HISTORY SECTION ================= */}
+                  <div className="border-t border-slate-200 dark:border-slate-800 pt-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 flex items-center gap-2">
+                        <GraduationCap size={18} />
+                        3. Education History
+                      </h4>
+                      <button 
+                        type="button" 
+                        onClick={addEduItem}
+                        className="px-3 py-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 font-semibold text-xs flex items-center gap-1.5 transition-colors border border-purple-500/20"
+                      >
+                        <Plus size={14} /> Add Education
+                      </button>
+                    </div>
+
+                    {(heroForm.education || []).length === 0 ? (
+                      <p className="text-slate-500 text-xs italic">No education entries added yet. Click "Add Education" to create one.</p>
+                    ) : (
+                      (heroForm.education || []).map((edu, idx) => (
+                        <div key={idx} className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-3 relative group">
+                          <button 
+                            type="button"
+                            onClick={() => removeEduItem(idx)}
+                            className="absolute top-3 right-3 p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-500/10 transition-colors"
+                            title="Remove Education Item"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pr-8">
+                            <div className="sm:col-span-2">
+                              <label className="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Degree / Major</label>
+                              <input 
+                                type="text"
+                                value={edu.degree || ''}
+                                onChange={(e) => updateEduItem(idx, 'degree', e.target.value)}
+                                className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-purple-500"
+                                placeholder="Bachelor of Computer Science"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Period</label>
+                              <input 
+                                type="text"
+                                value={edu.period || ''}
+                                onChange={(e) => updateEduItem(idx, 'period', e.target.value)}
+                                className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-purple-500"
+                                placeholder="2021 - 2025"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Institution / University</label>
+                            <input 
+                              type="text"
+                              value={edu.institution || ''}
+                              onChange={(e) => updateEduItem(idx, 'institution', e.target.value)}
+                              className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-purple-500"
+                              placeholder="State University / Institute"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Description / Achievements</label>
+                            <textarea 
+                              value={edu.description || ''}
+                              onChange={(e) => updateEduItem(idx, 'description', e.target.value)}
+                              rows="2"
+                              className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-purple-500 resize-none"
+                              placeholder="Specialized in Artificial Intelligence, Computer Vision..."
+                            />
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
                     <button 
                       type="submit" 
                       className="w-full sm:w-auto px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                     >
                       <Save size={16} />
-                      Save Hero Profile
+                      Save Profile, About & Education
                     </button>
                   </div>
                 </form>
