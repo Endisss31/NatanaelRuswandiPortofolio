@@ -51,9 +51,9 @@ const Navbar = ({ darkMode, setDarkMode }) => {
   }
 
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-6xl z-50">
+    <header className="fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 w-[calc(100%-1.25rem)] sm:w-[calc(100%-2rem)] max-w-6xl z-50">
       <nav 
-        className={`w-full rounded-[999px] transition-all duration-300 backdrop-blur-2xl backdrop-saturate-150 px-6 sm:px-8 py-3 shadow-2xl ${
+        className={`w-full rounded-[999px] transition-all duration-300 backdrop-blur-2xl backdrop-saturate-150 px-4 sm:px-8 py-2.5 sm:py-3 shadow-2xl ${
           scrolled 
             ? 'bg-white/35 dark:bg-slate-900/40 border border-white/50 dark:border-white/15 shadow-black/10 dark:shadow-black/40' 
             : 'bg-white/20 dark:bg-slate-900/25 border border-white/40 dark:border-white/10 shadow-black/5 dark:shadow-black/30'
@@ -64,7 +64,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
           <a 
             href="#home" 
             onClick={(e) => handleNavClick(e, '#home')}
-            className="text-xl sm:text-2xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 hover:opacity-80 transition-opacity"
+            className="text-lg sm:text-2xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 hover:opacity-80 transition-opacity"
           >
             NR
           </a>
@@ -112,38 +112,38 @@ const Navbar = ({ darkMode, setDarkMode }) => {
           </div>
 
           {/* Mobile menu trigger buttons */}
-          <div className="flex items-center lg:hidden gap-2">
+          <div className="flex items-center lg:hidden gap-1 sm:gap-2">
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-bold text-xs transition-all"
+              className="flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-bold text-xs transition-all"
               title="Switch Language"
             >
-              <Globe size={13} />
+              <Globe size={12} />
               <span>{lang.toUpperCase()}</span>
             </button>
 
             <RouterLink
               to="/admin/dashboard"
-              className="text-slate-500 dark:text-slate-400 hover:text-amber-500 p-2 rounded-full transition-colors"
+              className="text-slate-500 dark:text-slate-400 hover:text-amber-500 p-1.5 rounded-full transition-colors"
               title="Admin Portal"
             >
-              <ShieldAlert size={18} />
+              <ShieldAlert size={16} />
             </RouterLink>
 
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full bg-white/40 dark:bg-slate-800/40 hover:bg-white/60 dark:hover:bg-slate-800/60 border border-white/50 dark:border-white/10 text-slate-800 dark:text-slate-100 transition-colors"
+              className="p-1.5 rounded-full bg-white/40 dark:bg-slate-800/40 hover:bg-white/60 dark:hover:bg-slate-800/60 border border-white/50 dark:border-white/10 text-slate-800 dark:text-slate-100 transition-colors"
               aria-label="Toggle Theme"
             >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-full text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors"
+              className="p-1.5 rounded-full text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors"
               aria-label="Open menu"
             >
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
+              {isOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>

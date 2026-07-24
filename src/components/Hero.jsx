@@ -147,9 +147,9 @@ const Hero = () => {
             </span>
           </h1>
 
-          <div className="h-12 flex items-center justify-center lg:justify-start text-xl sm:text-2xl text-slate-700 dark:text-slate-300 font-semibold mb-6">
-            <span>{t('hero.creative')}&nbsp;</span>
-            <span className="text-blue-600 dark:text-blue-400 font-bold border-r-2 border-blue-500 pr-1 animate-pulse">
+          <div className="min-h-[3rem] py-1 flex flex-wrap items-center justify-center lg:justify-start text-lg sm:text-2xl text-slate-700 dark:text-slate-300 font-semibold mb-6 gap-x-1.5 leading-snug">
+            <span>{t('hero.creative')}</span>
+            <span className="text-blue-600 dark:text-blue-400 font-bold border-r-2 border-blue-500 pr-1 animate-pulse inline-block">
               {currentText || '\u00A0'}
             </span>
           </div>
