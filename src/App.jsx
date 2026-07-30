@@ -62,16 +62,16 @@ const MainContent = ({ darkMode, setDarkMode }) => {
 }
 
 function App() {
-  const [darkMode, setDarkMode] = useState(true)
+  const [darkMode, setDarkMode] = useState(false)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme')
-    if (savedTheme === 'light') {
-      setDarkMode(false)
-      document.documentElement.classList.remove('dark')
-    } else {
+    if (savedTheme === 'dark') {
       setDarkMode(true)
       document.documentElement.classList.add('dark')
+    } else {
+      setDarkMode(false)
+      document.documentElement.classList.remove('dark')
     }
   }, [])
 
