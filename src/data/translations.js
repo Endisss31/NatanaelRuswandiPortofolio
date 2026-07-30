@@ -4,95 +4,88 @@ export const translations = {
     nav: {
       home: "Beranda",
       about: "Tentang",
+      portfolio: "Portofolio",
       skills: "Keahlian",
-      projects: "Proyek",
-      experience: "Pengalaman",
-      certificates: "Sertifikat",
-      contact: "Kontak",
-      admin: "Portal Admin"
+      projects: "Proyek Unggulan",
+      experience: "Pengalaman Kerja",
+      certificates: "Sertifikasi & Pelatihan",
+      contact: "Kontak"
     },
     // Hero
     hero: {
-      welcome: "Selamat datang di portofolio saya",
-      hi: "Halo, saya",
-      creative: "Pengembang",
-      viewProjects: "Lihat Proyek",
-      downloadCv: "Unduh CV"
+      welcome: "Selamat Datang di Portofolio Saya",
+      hi: "Halo, Saya",
+      rolePrefix: "Spesialis",
+      viewProjects: "Lihat Karya & Proyek",
+      downloadCv: "Unduh CV Saya",
+      quickWa: "Hubungi WhatsApp"
     },
     // About
     about: {
       title: "Tentang Saya",
-      subtitle: "Ringkasan singkat latar belakang pendidikan, tujuan karir, dan perjalanan profesional saya.",
-      missionTitle: "Misi Saya",
-      yearsProjects: "Tahun Proyek",
-      completedApps: "Aplikasi Selesai",
-      careerFocusTitle: "Fokus Karir",
+      subtitle: "Latar belakang pendidikan, minat teknologi, dan visi pengembangan karir saya.",
+      missionTitle: "Profil & Minat Utama",
+      yearsProjects: "Tahun Pengalaman",
+      completedApps: "Karya & Sertifikasi",
+      careerFocusTitle: "Fokus Karir & Visi",
       educationHistoryTitle: "Riwayat Pendidikan",
-      collaboratorTitle: "Mencari Kolaborator?",
-      collaboratorText: "Saya terbuka untuk kemitraan riset, proyek sumber terbuka (open-source), serta posisi AI Engineering paruh waktu maupun penuh waktu."
+      collaboratorTitle: "Tertarik Berkolaborasi?",
+      collaboratorText: "Saya terbuka untuk peluang kerja web development, network administration, UI/UX design, maupun proyek freelance."
     },
     // Skills
     skills: {
-      title: "Keahlian & Teknologi",
-      subtitle: "Teknologi dan kerangka kerja yang saya kuasai untuk membangun aplikasi web, mobile, dan kecerdasan buatan.",
-      searchPlaceholder: "Cari keahlian (contoh: React, Kotlin, YOLO)...",
-      allCategories: "Semua Kategori",
-      proficiency: "Tingkat Penguasaan"
+      title: "Keahlian & Kompetensi",
+      subtitle: "Penguasaan teknologi web, jaringan komputer, desain UI/UX, dan keterampilan profesional.",
+      allCategories: "Semua Kategori"
     },
     // Projects
     projects: {
-      title: "Proyek Unggulan",
-      subtitle: "Kumpulan proyek web, aplikasi mobile, dan model kecerdasan buatan yang telah saya selesaikan.",
-      searchPlaceholder: "Cari proyek berdasarkan nama atau teknologi...",
-      allCategories: "Semua Proyek",
+      title: "Proyek & Portofolio",
+      subtitle: "Kumpulan perancangan web, aplikasi mobile, dan infrastruktur sistem yang telah saya kembangkan.",
+      allCategories: "Semua Kategori",
       viewCode: "Kode Source",
-      liveDemo: "Lihat Demo"
+      liveDemo: "Lihat Detail"
     },
     // Experience
     experience: {
       title: "Pengalaman Kerja",
-      subtitle: "Perjalanan karir, magang, dan proyek profesional yang pernah saya jalani.",
-      present: "Sekarang",
-      internship: "Magang",
-      fulltime: "Penuh Waktu",
-      parttime: "Paruh Waktu"
+      subtitle: "Perjalanan karir dan pengalaman teknis profesional di industri.",
+      present: "Sekarang"
     },
-    // Certificates & Achievements
+    // Certificates
     certificates: {
-      title: "Sertifikat & Pencapaian",
-      subtitle: "Sertifikasi resmi, penghargaan kompetisi, dan lisensi profesional yang telah saya raih.",
-      allCategories: "Semua",
-      certsTab: "Sertifikat",
-      achievementsTab: "Pencapaian",
-      viewCredential: "Lihat Lisensi / Bukti",
-      issuedBy: "Diberikan oleh"
+      title: "Sertifikasi & Pelatihan",
+      subtitle: "Lisensi kompetensi resmi BNSP, sertifikasi industri, dan pelatihan TIK.",
+      allTab: "Semua",
+      certsTab: "Sertifikasi Profesi (BNSP/STI)",
+      trainingsTab: "Pelatihan TIK",
+      viewCredential: "Lihat Lisensi",
+      issuedBy: "Diterbitkan oleh"
     },
     // Contact
     contact: {
       title: "Hubungi Saya",
-      subtitle: "Punya ide proyek menarik atau ingin berdiskusi? Jangan ragu untuk mengirim pesan kepada saya.",
-      channelsTitle: "Saluran Kontak",
+      subtitle: "Ingin mendiskusikan peluang kerja atau proyek? Silakan hubungi saya melalui kontak berikut.",
+      channelsTitle: "Informasi Kontak",
       emailLabel: "Alamat Email",
+      phoneLabel: "Telepon / WhatsApp",
       locationLabel: "Lokasi",
-      formTitle: "Kirim Pesan Langsung",
-      yourName: "Nama Anda",
+      formTitle: "Kirim Pesan",
+      yourName: "Nama Lengkap",
       namePlaceholder: "Masukkan nama Anda",
-      yourEmail: "Email Anda",
+      yourEmail: "Alamat Email",
       emailPlaceholder: "nama@contoh.com",
-      subject: "Subjek / Topik",
-      subjectPlaceholder: "Penawaran Proyek / Pertanyaan",
       message: "Pesan Anda",
-      messagePlaceholder: "Tuliskan pesan Anda di sini...",
+      messagePlaceholder: "Tuliskan pesan atau penawaran Anda di sini...",
       sendMessage: "Kirim Pesan",
-      sending: "Mengirim pesan...",
-      successMsg: "Pesan Anda berhasil terkirim! Terima kasih telah menghubungi.",
-      errorMsg: "Gagal mengirim pesan. Silakan coba lagi nanti."
+      sending: "Mengirim...",
+      successMsg: "Pesan Anda berhasil terkirim! Terima kasih.",
+      errorMsg: "Gagal mengirim pesan. Silakan coba lagi."
     },
     // Footer
     footer: {
-      tagline: "Membangun antarmuka modern dan solusi kecerdasan buatan berkualitas tinggi.",
-      rights: "Hak Cipta Dilindungi.",
-      builtWith: "Dibuat dengan React, Tailwind CSS, & Supabase"
+      tagline: "Natanael Ruswandi - Junior Web Developer & Network Administrator",
+      rights: "Hak Cipta Dilindungi."
     }
   },
   en: {
@@ -100,95 +93,88 @@ export const translations = {
     nav: {
       home: "Home",
       about: "About",
+      portfolio: "Portfolio",
       skills: "Skills",
-      projects: "Projects",
-      experience: "Experience",
-      certificates: "Certificates",
-      contact: "Contact",
-      admin: "Admin Portal"
+      projects: "Featured Projects",
+      experience: "Work Experience",
+      certificates: "Certifications & Training",
+      contact: "Contact"
     },
     // Hero
     hero: {
-      welcome: "Welcome to my portfolio",
+      welcome: "Welcome to My Portfolio",
       hi: "Hi, I'm",
-      creative: "Creative",
-      viewProjects: "View Projects",
-      downloadCv: "Download CV"
+      rolePrefix: "Specialized in",
+      viewProjects: "View Projects & Work",
+      downloadCv: "Download CV",
+      quickWa: "Chat on WhatsApp"
     },
     // About
     about: {
       title: "About Me",
-      subtitle: "Here is a brief summary of my educational background, career goals, and professional trajectory.",
-      missionTitle: "My Mission",
-      yearsProjects: "Years Projects",
-      completedApps: "Completed Apps",
-      careerFocusTitle: "Career Focus",
+      subtitle: "My educational trajectory, technology passion, and career vision.",
+      missionTitle: "Profile & Focus",
+      yearsProjects: "Years Experience",
+      completedApps: "Projects & Certs",
+      careerFocusTitle: "Career Focus & Goals",
       educationHistoryTitle: "Education History",
-      collaboratorTitle: "Looking for a collaborator?",
-      collaboratorText: "I am open to research partnerships, open-source projects, and part-time/full-time AI engineering roles."
+      collaboratorTitle: "Looking to Collaborate?",
+      collaboratorText: "I am open to web development, network administration, UI/UX design opportunities, or freelance projects."
     },
     // Skills
     skills: {
       title: "Technical Skills",
-      subtitle: "Technologies and frameworks I master for building web, mobile, and artificial intelligence solutions.",
-      searchPlaceholder: "Search skills (e.g. React, Kotlin, YOLO)...",
-      allCategories: "All Categories",
-      proficiency: "Proficiency Level"
+      subtitle: "Technologies, network infrastructure, UI/UX design, and professional capabilities.",
+      allCategories: "All Categories"
     },
     // Projects
     projects: {
       title: "Featured Projects",
-      subtitle: "A showcase of web, mobile, and machine learning applications I've crafted.",
-      searchPlaceholder: "Search projects by title or tech stack...",
-      allCategories: "All Projects",
+      subtitle: "Showcase of web applications, mobile designs, and network infrastructure systems.",
+      allCategories: "All Categories",
       viewCode: "View Code",
-      liveDemo: "Live Demo"
+      liveDemo: "View Details"
     },
     // Experience
     experience: {
       title: "Work Experience",
-      subtitle: "My professional career trajectory, internships, and project milestones.",
-      present: "Present",
-      internship: "Internship",
-      fulltime: "Full-Time",
-      parttime: "Part-Time"
+      subtitle: "Professional career trajectory and hands-on technical industry experience.",
+      present: "Present"
     },
-    // Certificates & Achievements
+    // Certificates
     certificates: {
-      title: "Certificates & Achievements",
-      subtitle: "Official certifications, competition awards, and professional credentials I have earned.",
-      allCategories: "All",
-      certsTab: "Certificates",
-      achievementsTab: "Achievements",
+      title: "Certifications & Training",
+      subtitle: "Official BNSP competency credentials, industry certificates, and ICT training.",
+      allTab: "All",
+      certsTab: "Professional Credentials (BNSP/STI)",
+      trainingsTab: "ICT Training Courses",
       viewCredential: "View Credential",
       issuedBy: "Issued by"
     },
     // Contact
     contact: {
       title: "Get In Touch",
-      subtitle: "Have an exciting project idea or want to connect? Feel free to drop me a message.",
-      channelsTitle: "Contact Channels",
+      subtitle: "Have a career opportunity or project inquiry? Feel free to reach out directly.",
+      channelsTitle: "Contact Information",
       emailLabel: "Email Address",
+      phoneLabel: "Phone / WhatsApp",
       locationLabel: "Location",
       formTitle: "Send a Direct Message",
-      yourName: "Your Name",
+      yourName: "Full Name",
       namePlaceholder: "Enter your full name",
-      yourEmail: "Your Email",
+      yourEmail: "Email Address",
       emailPlaceholder: "name@example.com",
-      subject: "Subject / Topic",
-      subjectPlaceholder: "Project Proposal / Inquiry",
       message: "Your Message",
       messagePlaceholder: "Write your message details here...",
       sendMessage: "Send Message",
-      sending: "Sending message...",
-      successMsg: "Your message has been sent successfully! Thank you for reaching out.",
-      errorMsg: "Failed to send message. Please try again later."
+      sending: "Sending...",
+      successMsg: "Your message was sent successfully! Thank you.",
+      errorMsg: "Failed to send message. Please try again."
     },
     // Footer
     footer: {
-      tagline: "Crafting premium user interfaces and state-of-the-art AI solutions.",
-      rights: "All Rights Reserved.",
-      builtWith: "Built with React, Tailwind CSS, & Supabase"
+      tagline: "Natanael Ruswandi - Junior Web Developer & Network Administrator",
+      rights: "All Rights Reserved."
     }
   }
 }

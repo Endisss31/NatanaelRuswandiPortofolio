@@ -1,181 +1,200 @@
 export const profileInfo = {
   name: "Natanael Ruswandi",
-  title: "AI Developer & Mobile Developer",
-  subtitles: ["AI Developer", "Computer Vision Enthusiast", "Mobile Developer"],
-  subtitles_id: ["Pengembang AI", "Penggemar Computer Vision", "Pengembang Aplikasi Mobile"],
-  subtitles_en: ["AI Developer", "Computer Vision Enthusiast", "Mobile Developer"],
-  bio: "Creative Developer & Designer specializing in building beautiful, functional, and user-friendly digital experiences. Passionate about machine learning, pose estimation, and crafting premium UI/UX.",
-  bio_id: "Pengembang & Desainer Kreatif yang berfokus membangun pengalaman digital yang indah, fungsional, dan mudah digunakan. Memiliki passion tinggi pada Machine Learning, Computer Vision, dan Desain UI/UX modern.",
-  bio_en: "Creative Developer & Designer specializing in building beautiful, functional, and user-friendly digital experiences. Passionate about machine learning, pose estimation, and crafting premium UI/UX.",
-  mission: "I am dedicated to building high-quality edge computer vision platforms and mobile interfaces that offer seamless workflows. I enjoy exploring algorithmic challenges and turning complex mathematical solutions into user-oriented products.",
-  mission_id: "Saya berdedikasi membangun platform Computer Vision dan antarmuka aplikasi berkualitas tinggi dengan alur kerja yang intuitif. Memiliki ketertarikan tinggi pada algoritma cerdas dan mengubah solusi matematika kompleks menjadi produk yang bermanfaat.",
-  mission_en: "I am dedicated to building high-quality edge computer vision platforms and mobile interfaces that offer seamless workflows. I enjoy exploring algorithmic challenges and turning complex mathematical solutions into user-oriented products.",
-  years_exp: "3+",
-  projects_count: "20+",
+  title: "Junior Web Developer & Network Administrator",
+  subtitles_id: ["Junior Web Developer", "Junior Network Administrator", "UI/UX & Mobile Developer"],
+  subtitles_en: ["Junior Web Developer", "Junior Network Administrator", "UI/UX & Mobile Developer"],
+  bio_id: "Nama saya Natanael Ruswandi. Saya memiliki minat dalam bidang teknologi, desain, dan pengembangan aplikasi, khususnya pada perancangan sistem, UI/UX, serta pembuatan aplikasi berbasis web maupun mobile. Saya senang mempelajari hal-hal baru yang berkaitan dengan teknologi dan berusaha mengembangkan kemampuan untuk menghasilkan karya yang bermanfaat serta sesuai dengan kebutuhan pengguna.",
+  bio_en: "My name is Natanael Ruswandi. I have a passion for technology, design, and application development, specializing in system design, UI/UX, as well as web and mobile application development. I enjoy exploring new tech concepts and continuously developing my skills to deliver impactful, user-centered digital solutions.",
+  mission_id: "Berdedikasi untuk merancang sistem dan antarmuka aplikasi yang intuitif, responsif, dan fungsional. Berpengalaman dalam pengelolaan jaringan komputer serta pembuatan aplikasi web modern.",
+  mission_en: "Dedicated to designing intuitive, responsive, and functional systems and app interfaces. Experienced in computer network administration and modern web application development.",
+  years_exp: "2+",
+  projects_count: "10+",
+  email: "natanaeldidi31@gmail.com",
+  phone: "085158813112",
+  whatsapp: "https://wa.me/6285158813112",
+  location: "Kuningan / Bandung, Jawa Barat, Indonesia",
+  address: "Jl. Moertahsiah Soepomo, No. 30 B, Link. Cipicung, Kuningan",
+  github: "https://github.com/Endisss31",
+  linkedin: "https://linkedin.com",
+  instagram: "https://instagram.com",
+  cvUrl: "/assets/cv.pdf",
+  career_goals_id: "Mengembangkan karir di bidang Web Development, Network Engineering, dan UI/UX Design untuk menciptakan produk teknologi yang efisien dan berdampak positif bagi masyarakat.",
+  career_goals_en: "Advancing my career in Web Development, Network Engineering, and UI/UX Design to create efficient tech products that make a positive impact.",
+  
   education: [
     {
-      degree: "Bachelor of Computer Science",
-      institution: "State University / Institute",
-      period: "2021 - 2025",
-      description: "Specialized in Artificial Intelligence, Computer Vision, and Software Engineering. Maintained a high GPA and participated in AI research projects."
+      degree: "S1 - Teknik Informatika",
+      institution: "Universitas Kuningan",
+      location: "Kab. Kuningan, Jawa Barat",
+      period: "2022 - 2026",
+      status: "Mahasiswa Aktif (Semester 3)",
+      description: "Fokus pada perancangan sistem informasi, algoritma dasar, pengembangan web & mobile, serta rekayasa perangkat lunak."
+    },
+    {
+      degree: "SMK - Teknik Komputer dan Jaringan (TKJ)",
+      institution: "SMK Muhammadiyah 2 Kuningan",
+      location: "Kab. Kuningan, Jawa Barat",
+      period: "2019 - 2022",
+      status: "Lulus",
+      description: "Mempelajari pengkabelan, konfigurasi jaringan komputer, manajemen server, hardware engineering, dan troubleshooting perangkat aktif."
     }
-  ],
-  careerGoals: "My ultimate goal is to pioneer solutions that bridge AI with interactive mobile and web applications, bringing state-of-the-art machine learning models into everyday utility.",
-  career_goals_id: "Tujuan utama saya adalah menciptakan solusi inovatif yang menjembatani AI dengan aplikasi mobile & web interaktif, sehingga model Machine Learning terkini dapat dimanfaatkan secara langsung oleh masyarakat.",
-  career_goals_en: "My ultimate goal is to pioneer solutions that bridge AI with interactive mobile and web applications, bringing state-of-the-art machine learning models into everyday utility.",
-  cvUrl: "/assets/cv.pdf"
+  ]
 };
 
 export const mockSkills = [
-  // Frontend
-  { id: "s1", name: "React JS", category: "Frontend", proficiency: 90 },
-  { id: "s2", name: "Tailwind CSS", category: "Frontend", proficiency: 95 },
-  { id: "s3", name: "Framer Motion", category: "Frontend", proficiency: 85 },
-  { id: "s4", name: "JavaScript (ES6+)", category: "Frontend", proficiency: 92 },
-  
-  // Backend
-  { id: "s5", name: "Node.js & Express", category: "Backend", proficiency: 80 },
-  { id: "s6", name: "Supabase & Firebase", category: "Backend", proficiency: 85 },
-  { id: "s7", name: "PostgreSQL / SQL", category: "Backend", proficiency: 78 },
-  
-  // Artificial Intelligence
-  { id: "s8", name: "YOLOv8 & Object Detection", category: "Artificial Intelligence", proficiency: 88 },
-  { id: "s9", name: "TensorFlow & TFLite", category: "Artificial Intelligence", proficiency: 82 },
-  { id: "s10", name: "Computer Vision & OpenCV", category: "Artificial Intelligence", proficiency: 85 },
-  { id: "s11", name: "Machine Learning (MLP, SVM)", category: "Artificial Intelligence", proficiency: 80 },
-  
-  // Mobile Development
-  { id: "s12", name: "Android Studio & Kotlin", category: "Mobile Development", proficiency: 85 },
-  { id: "s13", name: "Flutter / Dart", category: "Mobile Development", proficiency: 75 },
-  
-  // Tools
-  { id: "s14", name: "Git & GitHub", category: "Tools", proficiency: 90 },
-  { id: "s15", name: "Docker", category: "Tools", proficiency: 70 },
-  { id: "s16", name: "Figma (UI/UX Design)", category: "Tools", proficiency: 85 }
-];
+  // Web & Software Development
+  { id: "s1", name: "Web Development", category: "Web & Software", proficiency: 90 },
+  { id: "s2", name: "React.js", category: "Web & Software", proficiency: 85 },
+  { id: "s3", name: "HTML & CSS", category: "Web & Software", proficiency: 92 },
+  { id: "s4", name: "Software Engineering", category: "Web & Software", proficiency: 85 },
+  { id: "s5", name: "Databases & Data Management", category: "Web & Software", proficiency: 80 },
 
-export const mockProjects = [
-  {
-    id: "p1",
-    title: "SilatPRO",
-    description: "AI-based Pencak Silat movement evaluation application using pose estimation and machine learning. Evaluates professional stance and outputs accuracy percentages in real-time.",
-    image_url: "/assets/images/project.jpg",
-    tech_stack: ["YOLOv8", "TensorFlow Lite", "Android Studio", "Firebase", "MLP"],
-    github_link: "https://github.com",
-    live_link: "#",
-    category: "AI"
-  },
-  {
-    id: "p2",
-    title: "SmartVision Security",
-    description: "Advanced surveillance monitoring dashboard. Uses edge computer vision to track intrusions, detect faces, and send real-time alerts with heatmaps.",
-    image_url: "/assets/images/project.jpg",
-    tech_stack: ["Python", "OpenCV", "React JS", "Node.js", "PostgreSQL"],
-    github_link: "https://github.com",
-    live_link: "#",
-    category: "Web"
-  },
-  {
-    id: "p3",
-    title: "HealthTrack Mobile",
-    description: "Fitness companion app utilizing smart device sensors and TensorFlow Lite to recommend workout regimens and track calorie burn rates.",
-    image_url: "/assets/images/project.jpg",
-    tech_stack: ["Flutter", "TensorFlow Lite", "Firebase", "Node.js"],
-    github_link: "https://github.com",
-    live_link: "#",
-    category: "Mobile"
-  }
+  // Mobile & UI/UX Design
+  { id: "s6", name: "UI/UX Design", category: "Mobile & UI/UX", proficiency: 88 },
+  { id: "s7", name: "Mobile UI Design", category: "Mobile & UI/UX", proficiency: 88 },
+  { id: "s8", name: "Mobile Development", category: "Mobile & UI/UX", proficiency: 82 },
+  { id: "s9", name: "Mobile Application Design", category: "Mobile & UI/UX", proficiency: 85 },
+
+  // Networking & Hardware
+  { id: "s10", name: "Router MikroTik Setup", category: "Networking & Hardware", proficiency: 88 },
+  { id: "s11", name: "Fiber Optic Splicing", category: "Networking & Hardware", proficiency: 85 },
+  { id: "s12", name: "WirelessLAN Installation", category: "Networking & Hardware", proficiency: 90 },
+  { id: "s13", name: "Hardware Engineering", category: "Networking & Hardware", proficiency: 85 },
+  { id: "s14", name: "Network Administration", category: "Networking & Hardware", proficiency: 88 },
+
+  // AI & Data Science
+  { id: "s15", name: "Artificial Intelligence (AI)", category: "AI & Data Science", proficiency: 80 },
+  { id: "s16", name: "Machine Learning", category: "AI & Data Science", proficiency: 78 },
+  { id: "s17", name: "Computer Vision", category: "AI & Data Science", proficiency: 75 },
+  { id: "s18", name: "Data Science & Entry", category: "AI & Data Science", proficiency: 82 },
+
+  // Soft Skills & Media
+  { id: "s19", name: "Public Speaking & Presentations", category: "Soft Skills & Media", proficiency: 90 },
+  { id: "s20", name: "Customer Relationship Management (CRM)", category: "Soft Skills & Media", proficiency: 85 },
+  { id: "s21", name: "Photography & Video Editing", category: "Soft Skills & Media", proficiency: 85 },
+  { id: "s22", name: "Marketing & Public Relations", category: "Soft Skills & Media", proficiency: 82 },
+  { id: "s23", name: "Microsoft Office", category: "Soft Skills & Media", proficiency: 95 }
 ];
 
 export const mockExperiences = [
   {
     id: "e1",
-    role: "AI Research Assistant",
-    company: "University AI Lab",
-    type: "Research",
-    start_date: "2024-03",
-    end_date: "Present",
-    description: "Led research on human pose estimation for traditional martial arts. Trained custom YOLOv8 and MLP models reaching 94.2% classification accuracy."
-  },
-  {
-    id: "e2",
-    role: "Mobile App Developer Intern",
-    company: "Tech Solutions Co.",
-    type: "Internship",
-    start_date: "2023-09",
-    end_date: "2024-02",
-    description: "Developed and optimized key features for a commercial Kotlin Android application, reducing crash rates by 15% and integrating offline sync functionality."
-  },
-  {
-    id: "e3",
-    role: "Freelance Full-Stack Developer",
-    company: "Self-employed",
-    type: "Freelance",
-    start_date: "2022-06",
-    end_date: "2023-08",
-    description: "Delivered responsive web interfaces and Supabase-backed content management systems for local startups and small businesses."
-  },
-  {
-    id: "e4",
-    role: "Head of Technology",
-    company: "Student Robotics Association",
-    type: "Organization",
-    start_date: "2022-01",
-    end_date: "2023-01",
-    description: "Organized workshops on OpenCV, robotic arm inverse kinematics, and Arduino microcontrollers. Led a team of 15 members to win a national robotic prize."
+    role: "Teknisi",
+    company: "PT. Citra Jelajah Informatika (CIFO)",
+    location: "Kota Bandung, Jawa Barat, Indonesia",
+    type: "Internship / Work Experience",
+    start_date: "Januari 2021",
+    end_date: "April 2021",
+    description: "• Setup Router MikroTik & konfigurasi jaringan WiFi corporate.\n• Inventarisir dan perawatan perangkat aktif jaringan.\n• Instalasi infrastruktur WirelessLAN & maintenance customer corporate.\n• Penyambungan dan pemeliharaan kabel serat optik (Splicing Fiber Optic)."
   }
 ];
 
 export const mockCertificates = [
   {
     id: "c1",
-    title: "Deep Learning Specialization",
-    issuer: "Coursera / DeepLearning.AI",
-    date: "2024-05",
-    image_url: "/assets/images/project.jpg",
-    credential_url: "https://coursera.org"
+    title: "Junior Web Developer",
+    issuer: "BNSP - Badan Nasional Sertifikasi Profesi",
+    date: "Oktober 2024",
+    type: "Sertifikasi Profesi",
+    credential_id: "BNSP-JWD-2024",
+    pdf_url: "/assets/certificates/sertifikasi (4).pdf",
+    image_url: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=600&auto=format&fit=crop&q=80",
+    description: "Sertifikasi kompetensi nasional BNSP dalam bidang pembuatan dan pengembangan aplikasi berbasis web standar industri."
   },
   {
     id: "c2",
-    title: "TensorFlow Developer Certificate",
-    issuer: "Google / TensorFlow",
-    date: "2023-11",
-    image_url: "/assets/images/project.jpg",
-    credential_url: "https://tensorflow.org"
+    title: "Junior Network Administrator",
+    issuer: "BNSP - Badan Nasional Sertifikasi Profesi",
+    date: "April 2024",
+    type: "Sertifikasi Profesi",
+    credential_id: "BNSP-JNA-2024",
+    pdf_url: "/assets/certificates/sertifikasi (3).pdf",
+    image_url: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&auto=format&fit=crop&q=80",
+    description: "Sertifikasi kompetensi nasional BNSP dalam pengelolaan, perencanaan, dan pemeliharaan jaringan komputer."
+  },
+  {
+    id: "c5",
+    title: "HTML + CSS Specialist",
+    issuer: "Information Technology Specialist (ITS)",
+    date: "Agustus 2025",
+    type: "Sertifikasi Profesi",
+    credential_id: "ITS-HTML-CSS-2025",
+    pdf_url: "/assets/certificates/sertifikasi (2).pdf",
+    image_url: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&auto=format&fit=crop&q=80",
+    description: "Sertifikasi sertifikasi spesialisasi standar industri dalam penyusunan struktur web semantic HTML5 dan styling CSS modern."
   },
   {
     id: "c3",
-    title: "Associate Android Developer",
-    issuer: "Google Developer Certification",
-    date: "2023-04",
-    image_url: "/assets/images/project.jpg",
-    credential_url: "https://google.com"
+    title: "Hand Held Product (HPP)",
+    issuer: "Samsung Tech Institute (STI)",
+    date: "Januari 2019",
+    type: "Sertifikasi Industri",
+    credential_id: "STI-HPP-2019",
+    pdf_url: "/assets/certificates/sertifikasi (5).pdf",
+    image_url: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80",
+    description: "Sertifikasi teknikal Samsung Tech Institute dalam penanganan hardware dan perbaikan sistem produk perangkat genggam."
+  },
+  {
+    id: "c4",
+    title: "Sertifikat Prakerin / PKL",
+    issuer: "PT. Citra Jelajah Informatika (CIFO)",
+    date: "April 2021",
+    type: "Sertifikasi Industri",
+    credential_id: "CIFO-PKL-2021",
+    pdf_url: "/assets/certificates/pengalaman.pdf",
+    image_url: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80",
+    description: "Sertifikat Praktik Kerja Lapangan (PKL) dalam pengoperasian jaringan MikroTik, pengabelan fiber optik, dan pemeliharaan perangkat WirelessLAN."
   }
 ];
 
-export const mockAchievements = [
+export const mockTrainings = [
   {
-    id: "a1",
-    title: "1st Place - National AI Hackathon",
-    type: "Competitions",
-    date: "2024-10",
-    description: "Developed a computer vision prototype detecting driver fatigue in real-time under low-light conditions.",
-    image_url: "/assets/images/project.jpg"
+    id: "t2",
+    title: "Pelatihan TIK - JUNIOR WEB DEVELOPER",
+    organizer: "BNSP - Badan Nasional Sertifikasi Profesi",
+    date: "September - Oktober 2024",
+    pdf_url: "/assets/certificates/sertifpelatihan (1).pdf",
+    description: "Program pelatihan intensif pengembangan web full-stack dasar, pemrograman client-side dan server-side."
   },
   {
-    id: "a2",
-    title: "Keynote Speaker - Seminar on Future AI & CV",
-    type: "Seminars",
-    date: "2024-02",
-    description: "Delivered a presentation on 'Edge AI: Running TensorFlow models on Android devices' to 200+ undergraduate students.",
-    image_url: "/assets/images/project.jpg"
+    id: "t3",
+    title: "Pelatihan TIK - JUNIOR NETWORK ADMINISTRATOR",
+    organizer: "BNSP - Badan Nasional Sertifikasi Profesi",
+    date: "Maret - April 2024",
+    pdf_url: "/assets/certificates/sertifpelatihan (2).pdf",
+    description: "Pelatihan administrasi jaringan komputer, subnetting, pembuatan kabel jaringan, dan manajemen perangkat switch/router."
+  }
+];
+
+export const mockProjects = [
+  {
+    id: "p1",
+    title: "Three Queens Interior",
+    description: "Platform website desain interior & arsitektur profesional. Menyajikan katalog portofolio proyek interior, galeri furnitur, konsultasi desain, dan sistem antarmuka responsif.",
+    image_url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&auto=format&fit=crop&q=80",
+    tech_stack: ["Web Development", "UI/UX Design", "Responsive Design", "JavaScript"],
+    github_link: "",
+    live_link: "https://interiorthreequeens.com/",
+    category: "Web"
   },
   {
-    id: "a3",
-    title: "Best Graduate Candidate Award",
-    type: "Awards",
-    date: "2025-01",
-    description: "Awarded by the Department of Computer Science for academic performance and active research contributions.",
-    image_url: "/assets/images/project.jpg"
+    id: "p2",
+    title: "NayYara Store",
+    description: "Platform toko online / e-commerce modern untuk produk fashion & kebutuhan harian. Dilengkapi sistem katalog produk, penelusuran produk, dan antarmuka responsif.",
+    image_url: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=80",
+    tech_stack: ["E-Commerce", "Web Development", "UI/UX Design", "Responsive Web"],
+    github_link: "",
+    live_link: "https://nayyarastore.com/",
+    category: "Web"
+  },
+  {
+    id: "p3",
+    title: "SilatPRO Mobile",
+    description: "Aplikasi mobile evaluasi gerakan Pencak Silat berbasis AI & Pose Estimation dengan Machine Learning. Mengevaluasi tingkat akurasi posisi kuda-kuda & jurus atlet secara real-time.",
+    image_url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80",
+    tech_stack: ["Android Studio", "YOLOv8", "TensorFlow Lite", "Mobile UI/UX", "Machine Learning"],
+    github_link: "https://github.com/Endisss31/SilatPRO",
+    live_link: "#",
+    category: "Mobile"
   }
 ];

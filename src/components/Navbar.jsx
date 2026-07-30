@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'
-import { Sun, Moon, Menu, X, ShieldAlert, Globe } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+import { Sun, Moon, Menu, X, Globe, ChevronDown, Code, Briefcase, Award, FolderKanban } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 
 const Navbar = ({ darkMode, setDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const navigate = useNavigate()
-  const location = useLocation()
+  const dropdownRef = useRef(null)
   const { lang, toggleLanguage, t } = useLanguage()
 
-  // Track scroll position for navbar style transformation
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -23,40 +21,42 @@ const Navbar = ({ darkMode, setDarkMode }) => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navLinks = [
-    { key: 'home', name: t('nav.home'), href: '#home' },
-    { key: 'about', name: t('nav.about'), href: '#about' },
-    { key: 'skills', name: t('nav.skills'), href: '#skills' },
-    { key: 'projects', name: t('nav.projects'), href: '#projects' },
-    { key: 'experience', name: t('nav.experience'), href: '#experience' },
-    { key: 'certificates', name: t('nav.certificates'), href: '#certificates' },
-    { key: 'contact', name: t('nav.contact'), href: '#contact' },
-  ]
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const handleNavClick = (e, href) => {
     e.preventDefault()
     setIsOpen(false)
+    setDropdownOpen(false)
 
-    if (location.pathname !== '/') {
-      navigate('/')
-      // Allow route change first, then scroll
-      setTimeout(() => {
-        const el = document.querySelector(href)
-        if (el) el.scrollIntoView({ behavior: 'smooth' })
-      }, 100)
-    } else {
-      const el = document.querySelector(href)
-      if (el) el.scrollIntoView({ behavior: 'smooth' })
+    const el = document.querySelector(href)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
+  const portfolioSubLinks = [
+    { key: 'skills', name: t('nav.skills'), href: '#skills', icon: <Code size={16} className="text-blue-500" /> },
+    { key: 'projects', name: t('nav.projects'), href: '#projects', icon: <FolderKanban size={16} className="text-indigo-500" /> },
+    { key: 'experience', name: t('nav.experience'), href: '#experience', icon: <Briefcase size={16} className="text-emerald-500" /> },
+    { key: 'certificates', name: t('nav.certificates'), href: '#certificates', icon: <Award size={16} className="text-amber-500" /> },
+  ]
+
   return (
-    <header className="fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 w-[calc(100%-1.25rem)] sm:w-[calc(100%-2rem)] max-w-6xl z-50">
+    <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] sm:w-[calc(100%-3rem)] max-w-5xl z-50">
       <nav 
-        className={`w-full rounded-[999px] transition-all duration-300 backdrop-blur-2xl backdrop-saturate-150 px-4 sm:px-8 py-2.5 sm:py-3 shadow-2xl ${
+        className={`w-full rounded-full transition-all duration-300 backdrop-blur-xl px-5 sm:px-7 py-2.5 sm:py-3 shadow-lg ${
           scrolled 
-            ? 'bg-white/35 dark:bg-slate-900/40 border border-white/50 dark:border-white/15 shadow-black/10 dark:shadow-black/40' 
-            : 'bg-white/20 dark:bg-slate-900/25 border border-white/40 dark:border-white/10 shadow-black/5 dark:shadow-black/30'
+            ? 'bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 shadow-slate-900/5 dark:shadow-black/30' 
+            : 'bg-white/60 dark:bg-slate-900/60 border border-slate-200/40 dark:border-slate-800/50 shadow-slate-900/5'
         }`}
       >
         <div className="flex items-center justify-between">
@@ -64,84 +64,97 @@ const Navbar = ({ darkMode, setDarkMode }) => {
           <a 
             href="#home" 
             onClick={(e) => handleNavClick(e, '#home')}
-            className="text-lg sm:text-2xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 hover:opacity-80 transition-opacity"
+            className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
-            NR
+            Natanael<span className="text-blue-600 dark:text-blue-400">.</span>
           </a>
 
-          {/* Desktop Nav Items */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.key}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className="text-slate-800 hover:text-blue-600 dark:text-slate-100 dark:hover:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:bg-white/40 dark:hover:bg-white/10"
+          {/* Desktop Nav Links */}
+          <div className="hidden md:flex items-center space-x-1">
+            <a
+              href="#home"
+              onClick={(e) => handleNavClick(e, '#home')}
+              className="text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+            >
+              {t('nav.home')}
+            </a>
+
+            <a
+              href="#about"
+              onClick={(e) => handleNavClick(e, '#about')}
+              className="text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+            >
+              {t('nav.about')}
+            </a>
+
+            {/* Portofolio Dropdown */}
+            <div 
+              className="relative" 
+              ref={dropdownRef}
+              onMouseEnter={() => setDropdownOpen(true)}
+              onMouseLeave={() => setDropdownOpen(false)}
+            >
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-1 text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
               >
-                {link.name}
-              </a>
-            ))}
+                <span>{t('nav.portfolio')}</span>
+                <ChevronDown size={15} className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''}`} />
+              </button>
 
-            {/* Language Switcher Pill */}
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-bold text-xs transition-all ml-2"
-              title="Switch Language / Ubah Bahasa"
-            >
-              <Globe size={14} />
-              <span>{lang.toUpperCase()}</span>
-            </button>
+              {/* Dropdown Menu */}
+              {dropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xl p-2 flex flex-col gap-1 transition-all z-50">
+                  {portfolioSubLinks.map((sub) => (
+                    <a
+                      key={sub.key}
+                      href={sub.href}
+                      onClick={(e) => handleNavClick(e, sub.href)}
+                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      {sub.icon}
+                      <span>{sub.name}</span>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
 
-            {/* Dash icon shortcut */}
-            <RouterLink
-              to="/admin/dashboard"
-              className="text-slate-500 dark:text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 p-2 rounded-full transition-colors ml-1 hover:bg-white/40 dark:hover:bg-white/10"
-              title={t('nav.admin')}
+            <a
+              href="#contact"
+              onClick={(e) => handleNavClick(e, '#contact')}
+              className="text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
             >
-              <ShieldAlert size={18} />
-            </RouterLink>
-
-            {/* Theme Toggle Button */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full bg-white/40 dark:bg-slate-800/40 hover:bg-white/60 dark:hover:bg-slate-800/60 border border-white/50 dark:border-white/10 text-slate-800 dark:text-slate-100 hover:text-amber-500 dark:hover:text-amber-400 transition-all shadow-sm ml-2 backdrop-blur-md"
-              aria-label="Toggle Theme"
-            >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
+              {t('nav.contact')}
+            </a>
           </div>
 
-          {/* Mobile menu trigger buttons */}
-          <div className="flex items-center lg:hidden gap-1 sm:gap-2">
+          {/* Right Action Icons (Language & Theme) */}
+          <div className="flex items-center space-x-2">
+            {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-bold text-xs transition-all"
-              title="Switch Language"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200/60 dark:border-slate-700"
+              title="Switch Language / Ubah Bahasa"
             >
-              <Globe size={12} />
+              <Globe size={13} className="text-blue-500" />
               <span>{lang.toUpperCase()}</span>
             </button>
 
-            <RouterLink
-              to="/admin/dashboard"
-              className="text-slate-500 dark:text-slate-400 hover:text-amber-500 p-1.5 rounded-full transition-colors"
-              title="Admin Portal"
-            >
-              <ShieldAlert size={16} />
-            </RouterLink>
-
+            {/* Theme Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-1.5 rounded-full bg-white/40 dark:bg-slate-800/40 hover:bg-white/60 dark:hover:bg-slate-800/60 border border-white/50 dark:border-white/10 text-slate-800 dark:text-slate-100 transition-colors"
+              className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors border border-slate-200/60 dark:border-slate-700"
               aria-label="Toggle Theme"
             >
-              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+              {darkMode ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} className="text-slate-600" />}
             </button>
 
+            {/* Mobile Hamburger */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-1.5 rounded-full text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors"
-              aria-label="Open menu"
+              className="md:hidden p-2 rounded-full text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              aria-label="Toggle Menu"
             >
               {isOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -149,19 +162,46 @@ const Navbar = ({ darkMode, setDarkMode }) => {
         </div>
       </nav>
 
-      {/* Mobile Drawer Overlay */}
+      {/* Mobile Drawer */}
       {isOpen && (
-        <div className="lg:hidden mt-2 w-full bg-white/40 dark:bg-slate-900/45 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-3xl px-6 py-5 shadow-2xl flex flex-col gap-2 transition-all">
-          {navLinks.map((link) => (
-            <a
-              key={link.key}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className="text-slate-800 hover:text-blue-600 dark:text-slate-100 dark:hover:text-blue-400 text-base font-semibold py-2.5 px-3 rounded-xl hover:bg-white/40 dark:hover:bg-white/10 transition-all"
-            >
-              {link.name}
-            </a>
-          ))}
+        <div className="md:hidden mt-2 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col gap-2 transition-all">
+          <a
+            href="#home"
+            onClick={(e) => handleNavClick(e, '#home')}
+            className="text-slate-800 dark:text-slate-100 font-semibold py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            {t('nav.home')}
+          </a>
+          <a
+            href="#about"
+            onClick={(e) => handleNavClick(e, '#about')}
+            className="text-slate-800 dark:text-slate-100 font-semibold py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            {t('nav.about')}
+          </a>
+
+          <div className="py-2 border-t border-b border-slate-200/60 dark:border-slate-800 my-1 space-y-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 px-3">{t('nav.portfolio')}</span>
+            {portfolioSubLinks.map((sub) => (
+              <a
+                key={sub.key}
+                href={sub.href}
+                onClick={(e) => handleNavClick(e, sub.href)}
+                className="flex items-center gap-3 text-slate-700 dark:text-slate-200 font-medium py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm"
+              >
+                {sub.icon}
+                <span>{sub.name}</span>
+              </a>
+            ))}
+          </div>
+
+          <a
+            href="#contact"
+            onClick={(e) => handleNavClick(e, '#contact')}
+            className="text-slate-800 dark:text-slate-100 font-semibold py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            {t('nav.contact')}
+          </a>
         </div>
       )}
     </header>

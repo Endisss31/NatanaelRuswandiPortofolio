@@ -1,131 +1,125 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Code, Server, BrainCircuit, Smartphone, Wrench } from 'lucide-react'
-import { supabase, isSupabaseConfigured } from '../lib/supabase'
-import { mockSkills } from '../data/mockData'
+import React from 'react'
+import { Code, Server, Smartphone, Cpu, Wrench, Globe, Database, Terminal, FileCode, HardDrive } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
+
+const techLogos = [
+  { name: "React.js", logo: "https://cdn.simpleicons.org/react", icon: <Code className="text-cyan-500" size={24} /> },
+  { name: "JavaScript", logo: "https://cdn.simpleicons.org/javascript", icon: <FileCode className="text-amber-500" size={24} /> },
+  { name: "HTML5", logo: "https://cdn.simpleicons.org/html5", icon: <Globe className="text-orange-500" size={24} /> },
+  { name: "CSS3", logo: "https://cdn.jsdelivr.net/gh/devicon/devicon/icons/css3/css3-original.svg", icon: <FileCode className="text-blue-500" size={24} /> },
+  { name: "Tailwind", logo: "https://cdn.simpleicons.org/tailwindcss", icon: <Code className="text-teal-400" size={24} /> },
+  { name: "Android", logo: "https://cdn.simpleicons.org/android", icon: <Smartphone className="text-emerald-500" size={24} /> },
+  { name: "Node.js", logo: "https://cdn.simpleicons.org/nodedotjs", icon: <Server className="text-emerald-600" size={24} /> },
+  { name: "Figma", logo: "https://cdn.simpleicons.org/figma", icon: <Wrench className="text-pink-500" size={24} /> },
+  { name: "Git", logo: "https://cdn.simpleicons.org/git", icon: <Terminal className="text-red-500" size={24} /> },
+  { name: "GitHub", logo: "https://cdn.jsdelivr.net/gh/devicon/devicon/icons/github/github-original.svg", icon: <Terminal className="text-slate-800 dark:text-slate-200" size={24} /> },
+  { name: "Python", logo: "https://cdn.simpleicons.org/python", icon: <FileCode className="text-blue-600" size={24} /> },
+  { name: "MySQL", logo: "https://cdn.simpleicons.org/mysql", icon: <Database className="text-sky-600" size={24} /> },
+  { name: "PostgreSQL", logo: "https://cdn.simpleicons.org/postgresql", icon: <Database className="text-indigo-500" size={24} /> },
+  { name: "MikroTik", logo: "https://cdn.simpleicons.org/mikrotik", icon: <Server className="text-red-600" size={24} /> },
+  { name: "C++", logo: "https://cdn.simpleicons.org/cplusplus", icon: <Cpu className="text-blue-700" size={24} /> },
+  { name: "Arduino", logo: "https://cdn.simpleicons.org/arduino", icon: <Cpu className="text-teal-600" size={24} /> },
+  { name: "VS Code", logo: "https://cdn.jsdelivr.net/gh/devicon/devicon/icons/vscode/vscode-original.svg", icon: <FileCode className="text-blue-500" size={24} /> },
+  { name: "Network", logo: "https://cdn.simpleicons.org/cisco", icon: <Server className="text-blue-400" size={24} /> },
+  { name: "MS Office", logo: "https://cdn.simpleicons.org/microsoft", icon: <HardDrive className="text-blue-600" size={24} /> },
+]
 
 const Skills = () => {
   const { t } = useLanguage()
-  const [skills, setSkills] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('All')
 
-  useEffect(() => {
-    const fetchSkills = async () => {
-      let loadedSkills = null
-      try {
-        if (isSupabaseConfigured && supabase) {
-          const { data, error } = await supabase
-            .from('skills')
-            .select('*')
-            .order('created_at', { ascending: true })
-
-          if (!error && data && data.length > 0) {
-            loadedSkills = data
-          }
-        }
-      } catch (err) {
-        console.error("Error loading skills from database, using fallback:", err)
-      }
-
-      if (!loadedSkills) {
-        const local = localStorage.getItem('db_skills')
-        if (local) {
-          try {
-            const parsed = JSON.parse(local)
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              loadedSkills = parsed
-            }
-          } catch (e) {}
-        }
-      }
-
-      setSkills(loadedSkills || mockSkills)
-      setLoading(false)
-    }
-
-    fetchSkills()
-  }, [])
-
-  const categories = [
-    { id: 'All', name: t('skills.allCategories'), icon: null },
-    { id: 'Frontend', name: 'Frontend', icon: <Code size={16} /> },
-    { id: 'Backend', name: 'Backend', icon: <Server size={16} /> },
-    { id: 'Artificial Intelligence', name: 'AI & Vision', icon: <BrainCircuit size={16} /> },
-    { id: 'Mobile Development', name: 'Mobile', icon: <Smartphone size={16} /> },
-    { id: 'Tools', name: 'Tools', icon: <Wrench size={16} /> }
-  ]
-
-  const filteredSkills = activeTab === 'All' 
-    ? skills 
-    : skills.filter(skill => skill.category === activeTab)
+  // Triplicating lists for seamless infinite loop
+  const row1 = [...techLogos, ...techLogos, ...techLogos]
+  const row2 = [...techLogos].reverse().concat([...techLogos].reverse(), [...techLogos].reverse())
 
   return (
-    <div className="max-w-7xl mx-auto px-6 sm:px-8">
-      <div className="text-center max-w-3xl mx-auto mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white">{t('skills.title')}</h2>
-        <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full mb-6"></div>
-        <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg font-semibold">
+    <div className="w-full overflow-hidden">
+      {/* Title & Header */}
+      <div className="text-center max-w-2xl mx-auto mb-12 px-4">
+        <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 tracking-tight text-slate-900 dark:text-white">
+          {t('skills.title')}
+        </h2>
+        <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full mb-4"></div>
+        <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg font-medium">
           {t('skills.subtitle')}
         </p>
       </div>
 
-      {/* Tabs Selector */}
-      <div className="flex flex-wrap justify-center gap-2 mb-10">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setActiveTab(cat.id)}
-            className={`px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 border transition-all duration-300 ${
-              activeTab === cat.id
-                ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20'
-                : 'bg-white dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900 border-slate-200 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            {cat.icon}
-            {cat.name}
-          </button>
-        ))}
+      {/* Brand Logos Full-Width Marquee */}
+      <div className="relative py-4 w-full overflow-hidden">
+        {/* Left & Right Fade Overlay Gradient */}
+        <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
+
+        <div className="space-y-5 w-full overflow-hidden">
+          
+          {/* Row 1 Marquee */}
+          <div className="overflow-hidden w-full">
+            <div className="animate-marquee flex gap-4 sm:gap-5">
+              {row1.map((item, idx) => (
+                <div
+                  key={`r1-${item.name}-${idx}`}
+                  className="w-28 h-28 sm:w-32 sm:h-32 shrink-0 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all flex flex-col items-center justify-center p-3 gap-2 group cursor-pointer"
+                >
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-center p-2.5 group-hover:scale-110 transition-transform relative overflow-hidden">
+                    <img
+                      src={item.logo}
+                      alt={item.name}
+                      className="w-full h-full object-contain"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                        if (e.target.nextSibling) {
+                          e.target.nextSibling.style.display = 'flex'
+                        }
+                      }}
+                    />
+                    <div className="hidden w-full h-full items-center justify-center">
+                      {item.icon}
+                    </div>
+                  </div>
+                  <span className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 text-center truncate w-full group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {item.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Row 2 Marquee Reverse */}
+          <div className="overflow-hidden w-full">
+            <div className="animate-marquee-reverse flex gap-4 sm:gap-5">
+              {row2.map((item, idx) => (
+                <div
+                  key={`r2-${item.name}-${idx}`}
+                  className="w-28 h-28 sm:w-32 sm:h-32 shrink-0 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all flex flex-col items-center justify-center p-3 gap-2 group cursor-pointer"
+                >
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-center p-2.5 group-hover:scale-110 transition-transform relative overflow-hidden">
+                    <img
+                      src={item.logo}
+                      alt={item.name}
+                      className="w-full h-full object-contain"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                        if (e.target.nextSibling) {
+                          e.target.nextSibling.style.display = 'flex'
+                        }
+                      }}
+                    />
+                    <div className="hidden w-full h-full items-center justify-center">
+                      {item.icon}
+                    </div>
+                  </div>
+                  <span className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 text-center truncate w-full group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {item.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
       </div>
-
-      {/* Skill List Container */}
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        layout
-      >
-        {filteredSkills.map((skill) => (
-          <motion.div
-            key={skill.id}
-            layout
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-            className="p-5 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 rounded-2xl hover:border-blue-500/20 dark:hover:border-blue-500/25 transition-all duration-300 group hover:-translate-y-0.5 shadow-sm dark:shadow-md"
-          >
-            <div className="flex justify-between items-center mb-3">
-              <span className="font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-base">
-                {skill.name}
-              </span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/30 dark:border-white/5">
-                {skill.proficiency}%
-              </span>
-            </div>
-
-            {/* Progress track */}
-            <div className="h-2 w-full bg-slate-200 dark:bg-slate-950 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: `${skill.proficiency}%` }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
-              ></motion.div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
     </div>
   )
 }
