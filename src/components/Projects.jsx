@@ -44,8 +44,8 @@ const Projects = () => {
         ))}
       </div>
 
-      {/* Flex Content - Centered Cards */}
-      <div className="flex flex-wrap justify-center gap-6">
+      {/* 3 Grid Layout Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {filteredProjects.map((project) => (
           <motion.div
             key={project.id}
@@ -53,7 +53,7 @@ const Projects = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="w-full sm:w-[350px] md:w-[360px] flex flex-col bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all group"
+            className="flex flex-col bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all group h-full"
           >
             <div className="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-950">
               <img

@@ -40,9 +40,9 @@ export const translations = {
     },
     // Projects
     projects: {
-      title: "Proyek & Portofolio",
-      subtitle: "Kumpulan perancangan web, aplikasi mobile, dan infrastruktur sistem yang telah saya kembangkan.",
-      allCategories: "Semua Kategori",
+      title: "Featured Projects",
+      subtitle: "Showcase of web applications, mobile designs, and network infrastructure systems.",
+      allCategories: "All Categories",
       viewCode: "Kode Source",
       liveDemo: "Lihat Detail"
     },
