@@ -15,7 +15,7 @@ const Contact = () => {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!formData.name || !formData.email || !formData.message) {
       setStatus('error')
@@ -24,10 +24,32 @@ const Contact = () => {
     }
 
     setStatus('submitting')
-    setTimeout(() => {
-      setStatus('success')
-      setFormData({ name: '', email: '', message: '' })
-    }, 1000)
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/natanaeldidi31@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          _subject: `Pesan Baru Portofolio dari ${formData.name}`
+        })
+      })
+
+      if (response.ok) {
+        setStatus('success')
+        setFormData({ name: '', email: '', message: '' })
+      } else {
+        setStatus('error')
+        setErrorMessage('Gagal mengirim pesan. Silakan hubungi langsung via WhatsApp.')
+      }
+    } catch (err) {
+      setStatus('error')
+      setErrorMessage('Terjadi kesalahan koneksi. Silakan hubungi via WhatsApp.')
+    }
   }
 
   return (
