@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Github, Linkedin, Instagram, Mail, FileDown, ArrowRight, MessageSquareCode } from 'lucide-react'
 import { profileInfo } from '../data/mockData'
 import { useLanguage } from '../context/LanguageContext'
+import Silk from './Silk'
 
 const Hero = () => {
   const { t, lang } = useLanguage()
@@ -52,8 +53,19 @@ const Hero = () => {
   return (
     <div className="relative min-h-[90vh] flex items-center justify-center pt-28 pb-16 px-6 sm:px-8 overflow-hidden">
 
-      {/* Subtle, non-distracting background grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-60 pointer-events-none"></div>
+      {/* Silk WebGL animated background */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
+        <Silk
+          speed={5}
+          scale={1}
+          color="#1e3a5f"
+          noiseIntensity={1.5}
+          rotation={0}
+        />
+      </div>
+
+      {/* Bottom fade — blends Hero into the next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-slate-50 dark:from-slate-950 to-transparent pointer-events-none" style={{ zIndex: 1 }} />
 
       <div className="max-w-6xl mx-auto w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-12 relative z-10">
 
@@ -65,11 +77,11 @@ const Hero = () => {
           transition={{ duration: 0.6 }}
         >
           {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 text-blue-600 dark:text-blue-400 text-xs font-semibold uppercase tracking-wider mb-6">
+          <div className="inline-flex items-center py-1.5 text-blue-600 dark:text-blue-400 text-xs font-semibold uppercase tracking-wider mb-3">
             <span>{t('hero.welcome')}</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4 leading-tight">
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight">
             {t('hero.hi')} <br className="hidden sm:inline" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-400 dark:to-purple-400">
               {profileInfo.name}
@@ -84,7 +96,7 @@ const Hero = () => {
             </span>
           </div>
 
-          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-xl mb-8 mx-auto lg:mx-0 leading-relaxed font-normal">
+          <p className="text-white text-base sm:text-lg max-w-xl mb-8 mx-auto lg:mx-0 leading-relaxed font-normal">
             {displayBio}
           </p>
 

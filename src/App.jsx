@@ -29,7 +29,7 @@ const MainContent = ({ darkMode, setDarkMode }) => {
           <Hero />
         </section>
         
-        <section id="about" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-slate-100/30 dark:bg-slate-900/10">
+        <section id="about" className="py-20 md:py-28 bg-slate-100/30 dark:bg-slate-900/10">
           <About />
         </section>
 

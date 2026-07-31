@@ -52,19 +52,21 @@ const Navbar = ({ darkMode, setDarkMode }) => {
 
   return (
     <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] sm:w-[calc(100%-3rem)] max-w-5xl z-50">
-      <nav 
-        className={`w-full rounded-full transition-all duration-300 backdrop-blur-xl px-5 sm:px-7 py-2.5 sm:py-3 shadow-lg ${
-          scrolled 
-            ? 'bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 shadow-slate-900/5 dark:shadow-black/30' 
-            : 'bg-white/60 dark:bg-slate-900/60 border border-slate-200/40 dark:border-slate-800/50 shadow-slate-900/5'
+      <nav
+        className={`w-full rounded-full transition-all duration-500 backdrop-blur-3xl px-5 sm:px-7 py-2.5 sm:py-3 ${
+          scrolled
+            ? 'bg-white/90 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
+            : 'bg-white/5 border border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.2)]'
         }`}
       >
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <a 
-            href="#home" 
+          <a
+            href="#home"
             onClick={(e) => handleNavClick(e, '#home')}
-            className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className={`text-lg sm:text-xl font-bold tracking-tight transition-colors ${
+              scrolled ? 'text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400' : 'text-white hover:text-blue-300'
+            }`}
           >
             Natanael<span className="text-blue-600 dark:text-blue-400">.</span>
           </a>
@@ -74,7 +76,9 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             <a
               href="#home"
               onClick={(e) => handleNavClick(e, '#home')}
-              className="text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                scrolled ? 'text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
             >
               {t('nav.home')}
             </a>
@@ -82,21 +86,25 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             <a
               href="#about"
               onClick={(e) => handleNavClick(e, '#about')}
-              className="text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                scrolled ? 'text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
             >
               {t('nav.about')}
             </a>
 
             {/* Portofolio Dropdown */}
-            <div 
-              className="relative" 
+            <div
+              className="relative"
               ref={dropdownRef}
               onMouseEnter={() => setDropdownOpen(true)}
               onMouseLeave={() => setDropdownOpen(false)}
             >
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-1 text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+                className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                  scrolled ? 'text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
               >
                 <span>{t('nav.portfolio')}</span>
                 <ChevronDown size={15} className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''}`} />
@@ -104,13 +112,13 @@ const Navbar = ({ darkMode, setDarkMode }) => {
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xl p-2 flex flex-col gap-1 transition-all z-50">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 flex flex-col gap-1 z-50">
                   {portfolioSubLinks.map((sub) => (
                     <a
                       key={sub.key}
                       href={sub.href}
                       onClick={(e) => handleNavClick(e, sub.href)}
-                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-colors"
                     >
                       {sub.icon}
                       <span>{sub.name}</span>
@@ -123,7 +131,9 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             <a
               href="#contact"
               onClick={(e) => handleNavClick(e, '#contact')}
-              className="text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                scrolled ? 'text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
             >
               {t('nav.contact')}
             </a>
@@ -134,7 +144,11 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200/60 dark:border-slate-700"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                scrolled
+                  ? 'bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-white border border-slate-200 dark:border-white/15'
+                  : 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
+              }`}
               title="Switch Language / Ubah Bahasa"
             >
               <Globe size={13} className="text-blue-500" />
@@ -144,7 +158,11 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             {/* Theme Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors border border-slate-200/60 dark:border-slate-700"
+              className={`p-2 rounded-full transition-all ${
+                scrolled
+                  ? 'bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-white border border-slate-200 dark:border-white/15'
+                  : 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
+              }`}
               aria-label="Toggle Theme"
             >
               {darkMode ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} className="text-slate-600" />}
