@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 250" fill="none">
+  <!-- dt blue loop icon -->
+  <g transform="translate(45, 10)">
+    <path d="M 60 10 L 60 90 A 45 45 0 0 1 15 45 A 45 45 0 0 1 60 10 Z" fill="#007BFF"/>
+    <path d="M 60 10 L 100 10 L 100 120 A 35 35 0 0 1 65 155 L 40 155" stroke="#007BFF" stroke-width="26" stroke-linecap="round" fill="none"/>
+    <rect x="60" y="10" width="28" height="120" fill="#007BFF" rx="14"/>
+  </g>
+  <!-- digitalent text -->
+  <text x="15" y="220" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="52" fill="#050505" letter-spacing="-1">digitalent</text>
+</svg>

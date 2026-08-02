@@ -27,9 +27,8 @@ const techLogos = [
 const Skills = () => {
   const { t } = useLanguage()
 
-  // Triplicating lists for seamless infinite loop
+  // Triplicating list for seamless infinite loop
   const row1 = [...techLogos, ...techLogos, ...techLogos]
-  const row2 = [...techLogos].reverse().concat([...techLogos].reverse(), [...techLogos].reverse())
 
   return (
     <div className="w-full overflow-hidden">
@@ -45,55 +44,22 @@ const Skills = () => {
       </div>
 
       {/* Brand Logos Full-Width Marquee */}
-      <div className="relative py-4 w-full overflow-hidden">
+      <div className="relative py-6 sm:py-8 w-full overflow-hidden">
         {/* Left & Right Fade Overlay Gradient */}
         <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
         <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
 
-        <div className="space-y-5 w-full overflow-hidden">
+        <div className="w-full">
           
           {/* Row 1 Marquee */}
-          <div className="overflow-hidden w-full">
-            <div className="animate-marquee flex gap-4 sm:gap-5">
+          <div className="overflow-hidden w-full py-4 -my-4">
+            <div className="animate-marquee flex gap-4 sm:gap-5 py-4 px-2">
               {row1.map((item, idx) => (
                 <div
                   key={`r1-${item.name}-${idx}`}
-                  className="w-28 h-28 sm:w-32 sm:h-32 shrink-0 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all flex flex-col items-center justify-center p-3 gap-2 group cursor-pointer"
+                  className="w-28 h-28 sm:w-32 sm:h-32 shrink-0 glass-card glass-card-hover rounded-2xl flex flex-col items-center justify-center p-3 gap-2 group cursor-pointer border border-slate-200/80 dark:border-white/10"
                 >
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-center p-2.5 group-hover:scale-110 transition-transform relative overflow-hidden">
-                    <img
-                      src={item.logo}
-                      alt={item.name}
-                      className="w-full h-full object-contain"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.style.display = 'none'
-                        if (e.target.nextSibling) {
-                          e.target.nextSibling.style.display = 'flex'
-                        }
-                      }}
-                    />
-                    <div className="hidden w-full h-full items-center justify-center">
-                      {item.icon}
-                    </div>
-                  </div>
-                  <span className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 text-center truncate w-full group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                    {item.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Row 2 Marquee Reverse */}
-          <div className="overflow-hidden w-full">
-            <div className="animate-marquee-reverse flex gap-4 sm:gap-5">
-              {row2.map((item, idx) => (
-                <div
-                  key={`r2-${item.name}-${idx}`}
-                  className="w-28 h-28 sm:w-32 sm:h-32 shrink-0 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all flex flex-col items-center justify-center p-3 gap-2 group cursor-pointer"
-                >
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-center p-2.5 group-hover:scale-110 transition-transform relative overflow-hidden">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full glass-badge flex items-center justify-center p-2.5 group-hover:scale-110 transition-transform relative overflow-hidden">
                     <img
                       src={item.logo}
                       alt={item.name}

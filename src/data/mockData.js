@@ -94,6 +94,7 @@ export const mockCertificates = [
     id: "c1",
     title: "Junior Web Developer",
     issuer: "BNSP - Badan Nasional Sertifikasi Profesi",
+    issuer_logo: "/assets/logos/bnsp.svg",
     date: "Oktober 2024",
     type: "Sertifikasi Profesi",
     credential_id: "BNSP-JWD-2024",
@@ -105,6 +106,7 @@ export const mockCertificates = [
     id: "c2",
     title: "Junior Network Administrator",
     issuer: "BNSP - Badan Nasional Sertifikasi Profesi",
+    issuer_logo: "/assets/logos/bnsp.svg",
     date: "April 2024",
     type: "Sertifikasi Profesi",
     credential_id: "BNSP-JNA-2024",
@@ -115,18 +117,20 @@ export const mockCertificates = [
   {
     id: "c5",
     title: "HTML + CSS Specialist",
-    issuer: "Information Technology Specialist (ITS)",
+    issuer: "Certiport (ITS) - Pearson VUE",
+    issuer_logo: "/assets/logos/certiport.svg",
     date: "Agustus 2025",
     type: "Sertifikasi Profesi",
     credential_id: "ITS-HTML-CSS-2025",
     pdf_url: "/assets/certificates/sertifikasi (2).pdf",
     image_url: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&auto=format&fit=crop&q=80",
-    description: "Sertifikasi sertifikasi spesialisasi standar industri dalam penyusunan struktur web semantic HTML5 dan styling CSS modern."
+    description: "Sertifikasi spesialisasi standar industri internasional dari Certiport Pearson VUE dalam penyusunan struktur web semantic HTML5 dan CSS modern."
   },
   {
     id: "c3",
     title: "Hand Held Product (HPP)",
     issuer: "Samsung Tech Institute (STI)",
+    issuer_logo: "/assets/logos/samsung.svg",
     date: "Januari 2019",
     type: "Sertifikasi Industri",
     credential_id: "STI-HPP-2019",
@@ -138,6 +142,7 @@ export const mockCertificates = [
     id: "c4",
     title: "Sertifikat Prakerin / PKL",
     issuer: "PT. Citra Jelajah Informatika (CIFO)",
+    issuer_logo: "https://cdn.simpleicons.org/cisco",
     date: "April 2021",
     type: "Sertifikasi Industri",
     credential_id: "CIFO-PKL-2021",
@@ -151,18 +156,22 @@ export const mockTrainings = [
   {
     id: "t2",
     title: "Pelatihan TIK - JUNIOR WEB DEVELOPER",
-    organizer: "BNSP - Badan Nasional Sertifikasi Profesi",
+    organizer: "Digitalent Kominfo & BNSP",
+    issuer_logo: "/assets/logos/digitalent.svg",
     date: "September - Oktober 2024",
     pdf_url: "/assets/certificates/sertifpelatihan (1).pdf",
-    description: "Program pelatihan intensif pengembangan web full-stack dasar, pemrograman client-side dan server-side."
+    image_url: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=80",
+    description: "Program pelatihan intensif Digital Talent Scholarship Kominfo pengembangan web full-stack dasar, pemrograman client-side dan server-side."
   },
   {
     id: "t3",
     title: "Pelatihan TIK - JUNIOR NETWORK ADMINISTRATOR",
-    organizer: "BNSP - Badan Nasional Sertifikasi Profesi",
+    organizer: "Digitalent Kominfo & BNSP",
+    issuer_logo: "/assets/logos/digitalent.svg",
     date: "Maret - April 2024",
     pdf_url: "/assets/certificates/sertifpelatihan (2).pdf",
-    description: "Pelatihan administrasi jaringan komputer, subnetting, pembuatan kabel jaringan, dan manajemen perangkat switch/router."
+    image_url: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=600&auto=format&fit=crop&q=80",
+    description: "Pelatihan Digital Talent Scholarship Kominfo administrasi jaringan komputer, subnetting, pembuatan kabel jaringan, dan manajemen perangkat switch/router."
   }
 ];
 
@@ -170,31 +179,64 @@ export const mockProjects = [
   {
     id: "p1",
     title: "Three Queens Interior",
+    subtitle: "Web Development",
+    category: "Web Development",
+    status: "Selesai",
     description: "Platform website desain interior & arsitektur profesional. Menyajikan katalog portofolio proyek interior, galeri furnitur, konsultasi desain, dan sistem antarmuka responsif.",
+    solution: "Platform ini dirancang khusus untuk menampilkan portofolio desain interior kelas atas dengan navigasi yang intuitif, integrasi konsultasi langsung via WhatsApp, dan performa tinggi yang responsif di seluruh perangkat.",
     image_url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&auto=format&fit=crop&q=80",
-    tech_stack: ["Web Development", "UI/UX Design", "Responsive Design", "JavaScript"],
+    gallery: [
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1615874959474-d609969a20ed?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=1200&auto=format&fit=crop&q=80"
+    ],
+    tech_stack: ["Web Development", "UI/UX Design", "Responsive Design", "JavaScript", "HTML5", "CSS3", "Tailwind CSS", "Figma"],
     github_link: "",
-    live_link: "https://interiorthreequeens.com/",
-    category: "Web"
+    live_link: "https://interiorthreequeens.com/"
   },
   {
     id: "p2",
     title: "NayYara Store",
+    subtitle: "E-Commerce Platform",
+    category: "Web Development",
+    status: "Selesai",
     description: "Platform toko online / e-commerce modern untuk produk fashion & kebutuhan harian. Dilengkapi sistem katalog produk, penelusuran produk, dan antarmuka responsif.",
+    solution: "Aplikasi web e-commerce ini mengoptimalkan pengalaman belanja pelanggan dengan katalog produk yang cepat, integrasi sistem pemesanan mudah, dan antarmuka ramah pengguna di semua ukuran layar.",
     image_url: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=80",
-    tech_stack: ["E-Commerce", "Web Development", "UI/UX Design", "Responsive Web"],
+    gallery: [
+      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=1200&auto=format&fit=crop&q=80"
+    ],
+    tech_stack: ["E-Commerce", "Web Development", "UI/UX Design", "Responsive Web", "JavaScript", "React.js", "Tailwind CSS", "Node.js"],
     github_link: "",
-    live_link: "https://nayyarastore.com/",
-    category: "Web"
+    live_link: "https://nayyarastore.com/"
   },
   {
     id: "p3",
-    title: "SilatPRO Mobile",
-    description: "Aplikasi mobile evaluasi gerakan Pencak Silat berbasis AI & Pose Estimation dengan Machine Learning. Mengevaluasi tingkat akurasi posisi kuda-kuda & jurus atlet secara real-time.",
+    title: "SilatPRO",
+    subtitle: "Android App",
+    category: "Mobile Development",
+    status: "Selesai",
+    description: "Aplikasi ini bertujuan untuk membantu latihan mandiri para pesilat baru, dimana ada contoh gerakan, deteksi keypoint tubuh, menilai gerakan, mengevaluasi detail gerakan, terdiri dari beberapa kategori gerakan yaitu Pukulan, Tangkisan dan Tendangan.",
+    solution: "Aplikasi ini bertujuan untuk membantu latihan mandiri para pesilat baru, dimana ada contoh gerakan, deteksi keypoint tubuh, menilai gerakan, mengevaluasi detail gerakan, terdiri dari beberapa kategori gerakan yaitu Pukulan, Tangkisan dan Tendangan.",
     image_url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80",
-    tech_stack: ["Android Studio", "YOLOv8", "TensorFlow Lite", "Mobile UI/UX", "Machine Learning"],
+    gallery: [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1616469829941-c7200edec809?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop&q=80"
+    ],
+    tech_stack: ["Computer Vision", "Machine Learning", "Media Pipe", "YOLO", "Pose Estimation", "TensorFlow", "Python", "Kotlin", "GoogleColab", "Android Studio", "Figma"],
     github_link: "https://github.com/Endisss31/SilatPRO",
-    live_link: "#",
-    category: "Mobile"
+    live_link: "#"
   }
 ];

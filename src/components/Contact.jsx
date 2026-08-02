@@ -74,7 +74,7 @@ const Contact = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="p-7 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm space-y-6">
+          <div className="p-7 glass-card glass-card-hover space-y-6">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white">{t('contact.channelsTitle')}</h3>
 
             <div className="space-y-5">
@@ -123,7 +123,7 @@ const Contact = () => {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div className="pt-4 border-t border-slate-200/50 dark:border-white/10">
               <a
                 href={profileInfo.whatsapp}
                 target="_blank"
@@ -145,7 +145,7 @@ const Contact = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <div className="p-7 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm">
+          <div className="p-7 glass-card glass-card-hover">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">{t('contact.formTitle')}</h3>
             
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -160,7 +160,7 @@ const Contact = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder={t('contact.namePlaceholder')}
-                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white text-sm transition-colors"
+                  className="w-full px-4 py-3 rounded-2xl glass-badge focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white text-sm transition-colors"
                   disabled={status === 'submitting' || status === 'success'}
                   required
                 />
@@ -177,7 +177,7 @@ const Contact = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder={t('contact.emailPlaceholder')}
-                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white text-sm transition-colors"
+                  className="w-full px-4 py-3 rounded-2xl glass-badge focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white text-sm transition-colors"
                   disabled={status === 'submitting' || status === 'success'}
                   required
                 />
@@ -194,7 +194,7 @@ const Contact = () => {
                   onChange={handleInputChange}
                   rows="4"
                   placeholder={t('contact.messagePlaceholder')}
-                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white text-sm transition-colors resize-none"
+                  className="w-full px-4 py-3 rounded-2xl glass-badge focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white text-sm transition-colors resize-none"
                   disabled={status === 'submitting' || status === 'success'}
                   required
                 />

@@ -83,7 +83,7 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
 
         {/* Card */}
         <motion.div 
-          className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 p-8 rounded-3xl relative overflow-hidden shadow-2xl shadow-slate-900/10 dark:shadow-black/40"
+          className="glass-panel p-8 relative overflow-hidden shadow-2xl"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

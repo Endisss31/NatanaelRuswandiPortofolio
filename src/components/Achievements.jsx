@@ -87,12 +87,12 @@ const Achievements = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="glass-card hover:border-slate-350 dark:hover:border-slate-800 hover:-translate-y-1 transition-all flex flex-col justify-between shadow-sm dark:shadow-md"
+            className="glass-card glass-card-hover flex flex-col justify-between p-6 border border-slate-200/80 dark:border-white/10"
           >
             <div>
               {/* Header Icon & Tag */}
               <div className="flex justify-between items-center mb-6">
-                <div className="p-3 bg-slate-100 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-white/5 shadow-inner">
+                <div className="p-3 glass-badge rounded-2xl flex items-center justify-center">
                   {getAchievementIcon(ach.type)}
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getAchievementBadgeColor(ach.type)}`}>
@@ -105,13 +105,13 @@ const Achievements = () => {
                 {ach.title}
               </h3>
               
-              <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
+              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6">
                 {ach.description}
               </p>
             </div>
 
             {/* Date info footer */}
-            <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 font-semibold pt-4 border-t border-slate-200/50 dark:border-white/5">
+            <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 font-semibold pt-4 border-t border-slate-200/50 dark:border-white/10">
               <Calendar size={14} />
               <span>{ach.date}</span>
             </div>

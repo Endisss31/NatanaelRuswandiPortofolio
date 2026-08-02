@@ -16,9 +16,9 @@ export const translations = {
       welcome: "Selamat Datang di Portofolio Saya",
       hi: "Halo, Saya",
       rolePrefix: "Spesialis",
-      viewProjects: "Lihat Karya & Proyek",
-      downloadCv: "Unduh CV Saya",
-      quickWa: "Hubungi WhatsApp"
+      viewProjects: "Lihat Project",
+      downloadCv: "Unduh CV",
+      quickWa: "WhatsApp"
     },
     // About
     about: {
@@ -105,9 +105,9 @@ export const translations = {
       welcome: "Welcome to My Portfolio",
       hi: "Hi, I'm",
       rolePrefix: "Specialized in",
-      viewProjects: "View Projects & Work",
+      viewProjects: "View Projects",
       downloadCv: "Download CV",
-      quickWa: "Chat on WhatsApp"
+      quickWa: "WhatsApp"
     },
     // About
     about: {

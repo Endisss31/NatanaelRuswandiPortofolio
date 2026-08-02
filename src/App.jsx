@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Routes, Route, useParams } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -7,10 +8,11 @@ import Projects from './components/Projects'
 import Experience from './components/Experience'
 import Certificates from './components/Certificates'
 import Contact from './components/Contact'
+import ProjectDetail from './pages/ProjectDetail'
 
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
 
-const MainContent = ({ darkMode, setDarkMode }) => {
+const MainContent = ({ darkMode, setDarkMode, onSelectProject }) => {
   const { t } = useLanguage()
 
   return (
@@ -25,31 +27,38 @@ const MainContent = ({ darkMode, setDarkMode }) => {
       <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
       
       <main className="relative">
+        {/* Section 1: Clean (Hero) */}
         <section id="home">
           <Hero />
         </section>
         
-        <section id="about" className="py-20 md:py-28 bg-slate-100/30 dark:bg-slate-900/10">
+        {/* Section 2: Pattern (About) */}
+        <section id="about" className="relative py-20 md:py-28 bg-pattern bg-slate-100/40 dark:bg-slate-900/20 overflow-hidden">
           <About />
         </section>
 
-        <section id="skills" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-white dark:bg-slate-900/20">
+        {/* Section 3: Clean (Skills) */}
+        <section id="skills" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950">
           <Skills />
         </section>
 
-        <section id="projects" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-slate-100/30 dark:bg-slate-900/10">
-          <Projects />
+        {/* Section 4: Pattern (Projects) */}
+        <section id="projects" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-pattern bg-slate-100/40 dark:bg-slate-900/20">
+          <Projects onSelectProject={onSelectProject} />
         </section>
 
-        <section id="experience" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-white dark:bg-slate-900/20">
+        {/* Section 5: Clean (Experience) */}
+        <section id="experience" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-white dark:bg-slate-950">
           <Experience />
         </section>
 
-        <section id="certificates" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-slate-100/30 dark:bg-slate-900/10">
+        {/* Section 6: Pattern (Certificates) */}
+        <section id="certificates" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-pattern bg-slate-100/40 dark:bg-slate-900/20">
           <Certificates />
         </section>
 
-        <section id="contact" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-white dark:bg-slate-900/20">
+        {/* Section 7: Clean (Contact) */}
+        <section id="contact" className="py-20 md:py-28 border-t border-slate-200/60 dark:border-slate-800/80 bg-white dark:bg-slate-950">
           <Contact />
         </section>
       </main>
@@ -61,8 +70,15 @@ const MainContent = ({ darkMode, setDarkMode }) => {
   )
 }
 
+// Route Wrapper Component for Project Detail URL (/project/:id)
+const ProjectDetailRouteWrapper = ({ onBack }) => {
+  const { id } = useParams()
+  return <ProjectDetail projectId={id} onBack={onBack} />
+}
+
 function App() {
   const [darkMode, setDarkMode] = useState(false)
+  const [activeProjectId, setActiveProjectId] = useState(null)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme')
@@ -86,9 +102,26 @@ function App() {
     }
   }
 
+  const handleSelectProject = (id) => {
+    setActiveProjectId(id)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleBackToPortfolio = () => {
+    setActiveProjectId(null)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <LanguageProvider>
-      <MainContent darkMode={darkMode} setDarkMode={handleSetDarkMode} />
+      {activeProjectId ? (
+        <ProjectDetail projectId={activeProjectId} onBack={handleBackToPortfolio} />
+      ) : (
+        <Routes>
+          <Route path="/" element={<MainContent darkMode={darkMode} setDarkMode={handleSetDarkMode} onSelectProject={handleSelectProject} />} />
+          <Route path="/project/:id" element={<ProjectDetailRouteWrapper onBack={handleBackToPortfolio} />} />
+        </Routes>
+      )}
     </LanguageProvider>
   )
 }
