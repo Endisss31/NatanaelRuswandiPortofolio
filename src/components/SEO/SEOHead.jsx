@@ -2,10 +2,10 @@ import React from 'react'
 import { Helmet } from 'react-helmet-async'
 
 // ─── Site-wide constants ───────────────────────────────────────────────────────
-const SITE_URL = 'https://natanaelruswandi.vercel.app'
+const SITE_URL = 'https://natanael.tech'
 const SITE_NAME = 'Natanael Ruswandi Portfolio'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`
-const TWITTER_HANDLE = '@natanaelruswandi'
+const TWITTER_HANDLE = '@ntnlrswnd'
 const DEFAULT_LOCALE = 'en_US'
 
 // ─── Person JSON-LD ────────────────────────────────────────────────────────────
@@ -108,23 +108,23 @@ const SEOHead = ({
   // ── Breadcrumb JSON-LD ──────────────────────────────────────────────────────
   const breadcrumbSchema = breadcrumb
     ? {
-        '@context': 'https://schema.org',
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          {
-            '@type': 'ListItem',
-            position: 1,
-            name: 'Home',
-            item: SITE_URL,
-          },
-          ...breadcrumb.map((item, idx) => ({
-            '@type': 'ListItem',
-            position: idx + 2,
-            name: item.name,
-            item: `${SITE_URL}${item.path}`,
-          })),
-        ],
-      }
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: SITE_URL,
+        },
+        ...breadcrumb.map((item, idx) => ({
+          '@type': 'ListItem',
+          position: idx + 2,
+          name: item.name,
+          item: `${SITE_URL}${item.path}`,
+        })),
+      ],
+    }
     : null
 
   return (

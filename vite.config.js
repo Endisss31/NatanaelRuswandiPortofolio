@@ -10,5 +10,17 @@ export default defineConfig({
   preview: {
     allowedHosts: true,
   },
+  build: {
+    cssCodeSplit: true,
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom', 'react-helmet-async'],
+          motion: ['framer-motion', 'gsap'],
+          icons: ['lucide-react', 'react-icons'],
+        },
+      },
+    },
+  },
 })
-
