@@ -2,7 +2,7 @@ import React from 'react'
 import { Helmet } from 'react-helmet-async'
 
 // ─── Site-wide constants ───────────────────────────────────────────────────────
-const SITE_URL = 'https://natanael.tech'
+const SITE_URL = 'https://natanael-ruswandi-portofolio.vercel.app'
 const SITE_NAME = 'Natanael Ruswandi Portfolio'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`
 const TWITTER_HANDLE = '@ntnlrswnd'
