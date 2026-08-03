@@ -141,7 +141,7 @@ const SEOHead = ({
       />
       <meta
         name="google-site-verification"
-        content="3UXdBOir4ReCU3SKANtksPYQV4mhR2cjLuG-qc3uMGo"
+        content="KUwA7ODcGTRIjksnrX1dxziKmpSBOSOSxHR8EJ95cQ0"
       />
 
       {/* ── Canonical ── */}
