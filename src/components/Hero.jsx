@@ -143,7 +143,8 @@ const Hero = () => {
             <a
               href={profileInfo.whatsapp}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
+              aria-label="Chat with Natanael Ruswandi via WhatsApp"
               className="px-7 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all transform hover:-translate-y-0.5 w-full sm:w-auto text-sm"
             >
               <FaWhatsapp size={18} />
@@ -172,8 +173,8 @@ const Hero = () => {
                 key={idx}
                 href={soc.link}
                 target="_blank"
-                rel="noreferrer"
-                aria-label={soc.label}
+                rel="noopener noreferrer"
+                aria-label={`Visit Natanael Ruswandi's ${soc.label} profile`}
                 className="p-3 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-500/30 transition-all shadow-sm"
               >
                 {soc.icon}

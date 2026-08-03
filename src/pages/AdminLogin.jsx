@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Shield, Mail, Lock, ArrowLeft, AlertTriangle, Eye, EyeOff, Sun, Moon } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import SEOHead from '../components/SEO/SEOHead'
 
 const AdminLogin = ({ darkMode, setDarkMode }) => {
   const [email, setEmail] = useState('')
@@ -51,7 +52,9 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 flex items-center justify-center p-6 relative transition-colors duration-300">
+    <>
+      <SEOHead title="Admin Login" description="Secure admin login for Natanael Ruswandi portfolio management." canonicalPath="/admin/login" noIndex={true} />
+      <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 flex items-center justify-center p-6 relative transition-colors duration-300">
       {/* Background blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-[10%] left-[20%] w-[25rem] h-[25rem] bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 dark:opacity-15 animate-blob"></div>
@@ -193,6 +196,7 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
         </motion.div>
       </div>
     </div>
+    </>
   )
 }
 

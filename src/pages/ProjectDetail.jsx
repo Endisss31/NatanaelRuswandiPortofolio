@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { mockProjects, profileInfo } from '../data/mockData'
 import { useLanguage } from '../context/LanguageContext'
+import SEOHead from '../components/SEO/SEOHead'
 
 const ProjectDetail = ({ projectId: propProjectId, onBack }) => {
   const { t } = useLanguage()
@@ -47,8 +48,22 @@ const ProjectDetail = ({ projectId: propProjectId, onBack }) => {
   const hasLiveLink = project.live_link && project.live_link !== '#'
   const targetLiveUrl = hasLiveLink ? project.live_link : project.github_link
 
+  // Build a clean description from project data (max ~155 chars)
+  const seoDescription = `${project.title} — ${project.subtitle}. ${project.description}`.slice(0, 155)
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 py-10 px-4 sm:px-8 transition-colors duration-300">
+
+      {/* ── Per-project dynamic SEO ── */}
+      <SEOHead
+        title={`${project.title} — ${project.subtitle}`}
+        description={seoDescription}
+        canonicalPath={`/project/${project.id}`}
+        ogImage={project.image_url}
+        ogType="article"
+        breadcrumb={[{ name: project.title, path: `/project/${project.id}` }]}
+      />
+
       <div className="max-w-6xl mx-auto space-y-12">
 
         {/* Back Link Header */}

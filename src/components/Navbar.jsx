@@ -58,6 +58,8 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             ? 'bg-white/90 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
             : 'bg-white/5 border border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.2)]'
         }`}
+        aria-label="Main navigation"
+        role="navigation"
       >
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -102,6 +104,9 @@ const Navbar = ({ darkMode, setDarkMode }) => {
             >
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
+                aria-expanded={dropdownOpen}
+                aria-haspopup="true"
+                aria-controls="portfolio-dropdown"
                 className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                   scrolled ? 'text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
@@ -112,11 +117,12 @@ const Navbar = ({ darkMode, setDarkMode }) => {
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 flex flex-col gap-1 z-50">
+                <div id="portfolio-dropdown" role="menu" className="absolute top-full left-0 mt-2 w-56 bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 flex flex-col gap-1 z-50">
                   {portfolioSubLinks.map((sub) => (
                     <a
                       key={sub.key}
                       href={sub.href}
+                      role="menuitem"
                       onClick={(e) => handleNavClick(e, sub.href)}
                       className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-colors"
                     >
@@ -142,13 +148,14 @@ const Navbar = ({ darkMode, setDarkMode }) => {
           {/* Right Action Icons (Language & Theme) */}
           <div className="flex items-center space-x-2">
             {/* Language Toggle */}
-            <button
+              <button
               onClick={toggleLanguage}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                 scrolled
                   ? 'bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-white border border-slate-200 dark:border-white/15'
                   : 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
               }`}
+              aria-label={`Switch language to ${lang === 'en' ? 'Indonesian' : 'English'}`}
               title="Switch Language / Ubah Bahasa"
             >
               <Globe size={13} className="text-blue-500" />
