@@ -139,6 +139,10 @@ const SEOHead = ({
         name="robots"
         content={noIndex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'}
       />
+      <meta
+        name="google-site-verification"
+        content="3UXdBOir4ReCU3SKANtksPYQV4mhR2cjLuG-qc3uMGo"
+      />
 
       {/* ── Canonical ── */}
       <link rel="canonical" href={canonicalUrl} />
