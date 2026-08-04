@@ -4,4 +4,4 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/
 
-Sitemap: https://natanael-ruswandi-portofolio.vercel.app/sitemap.xml
+Sitemap: https://natanael.tech/sitemap.xml
