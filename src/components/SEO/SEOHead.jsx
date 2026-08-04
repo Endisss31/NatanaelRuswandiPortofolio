@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async'
 
 // ─── Site-wide constants ───────────────────────────────────────────────────────
 const SITE_URL = 'https://natanael.tech'
-const SITE_NAME = 'Natanael Ruswandi Portfolio'
+const SITE_NAME = 'Natanael Ruswandi'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`
 const TWITTER_HANDLE = '@ntnlrswnd'
 const DEFAULT_LOCALE = 'en_US'
