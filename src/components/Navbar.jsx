@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Sun, Moon, Menu, X, Globe, ChevronDown } from 'lucide-react'
+import { Sun, Moon, Menu, X, Globe, ChevronDown, Code, Briefcase, Award, FolderKanban } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 
 const Navbar = ({ darkMode, setDarkMode }) => {
