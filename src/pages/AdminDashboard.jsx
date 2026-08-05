@@ -173,9 +173,43 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const [certForm, setCertForm] = useState({ title: '', issuer: '', type: 'Sertifikasi Profesi', date: '', issuer_logo: '', image_url: '', pdf_url: '', credential_url: '' })
   const [cvFile, setCvFile] = useState(null)
 
-  // Initialize and load all records
+  // Session protection & Logout handler
+  const handleLogout = async () => {
+    try {
+      if (isSupabaseConfigured && supabase) {
+        await supabase.auth.signOut()
+      }
+    } catch (e) {}
+    localStorage.removeItem('mock_admin_session')
+    navigate('/admin/login', { replace: true })
+  }
+
+  // Initialize, verify authentication session, and load all records
   useEffect(() => {
-    loadAllData()
+    const checkAuth = async () => {
+      let isAuthenticated = false
+      if (isSupabaseConfigured && supabase) {
+        const { data } = await supabase.auth.getSession()
+        if (data?.session) {
+          isAuthenticated = true
+        }
+      }
+      if (!isAuthenticated) {
+        const mockAuth = localStorage.getItem('mock_admin_session') === 'true'
+        if (mockAuth) {
+          isAuthenticated = true
+        }
+      }
+
+      if (!isAuthenticated) {
+        navigate('/admin/login', { replace: true })
+        return
+      }
+
+      loadAllData()
+    }
+
+    checkAuth()
   }, [])
 
   const loadAllData = async () => {
@@ -501,16 +535,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     }
   }
 
-  // Auth Logout trigger
-  const handleLogout = async () => {
-    localStorage.removeItem('mock_admin_session')
-    if (isSupabaseConfigured && supabase) {
-      try {
-        await supabase.auth.signOut()
-      } catch (e) {}
-    }
-    navigate('/admin/login')
-  }
+
 
   /* ========================================================
      PROJECTS CRUD ACTIONS

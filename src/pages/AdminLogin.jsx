@@ -13,6 +13,22 @@ const AdminLogin = ({ darkMode, setDarkMode }) => {
   const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
 
+  React.useEffect(() => {
+    const checkAlreadyLoggedIn = async () => {
+      if (isSupabaseConfigured && supabase) {
+        const { data } = await supabase.auth.getSession()
+        if (data?.session) {
+          navigate('/admin/dashboard', { replace: true })
+          return
+        }
+      }
+      if (localStorage.getItem('mock_admin_session') === 'true') {
+        navigate('/admin/dashboard', { replace: true })
+      }
+    }
+    checkAlreadyLoggedIn()
+  }, [navigate])
+
   const handleLogin = async (e) => {
     e.preventDefault()
     if (!email || !password) {

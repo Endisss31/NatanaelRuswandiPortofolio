@@ -132,6 +132,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainContent darkMode={darkMode} setDarkMode={handleSetDarkMode} onSelectProject={handleSelectProject} />} />
           <Route path="/project/:id" element={<ProjectDetailRouteWrapper onBack={handleBackToPortfolio} />} />
+          <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
