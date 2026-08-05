@@ -1,14 +1,18 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Award, Calendar, Eye, X, BookOpenCheck, FileText, Download, Image as ImageIcon } from 'lucide-react'
-import { mockCertificates, mockTrainings } from '../data/mockData'
 import { useLanguage } from '../context/LanguageContext'
+import { usePortfolioData } from '../lib/usePortfolioData'
 
 const Certificates = () => {
   const { t } = useLanguage()
+  const { certificates } = usePortfolioData()
   const [activeTab, setActiveTab] = useState('all') // 'all', 'certs', 'trainings'
   const [selectedCert, setSelectedCert] = useState(null)
   const [viewMode, setViewMode] = useState('pdf') // 'pdf' or 'image'
+
+  const profCerts = certificates.filter(c => !c.type || c.type !== 'Pelatihan')
+  const trainings = certificates.filter(c => c.type === 'Pelatihan')
 
   const handleOpenCert = (cert, mode = 'pdf') => {
     setSelectedCert(cert)
@@ -61,9 +65,20 @@ const Certificates = () => {
         </button>
       </div>
 
-      <div className="space-y-14">
-        
-        {/* Section 1: Sertifikasi Profesi & Industri */}
+      {/* Empty State */}
+      {certificates.length === 0 ? (
+        <div className="py-16 text-center glass-panel rounded-2xl p-8 max-w-lg mx-auto border border-dashed border-slate-300 dark:border-slate-800">
+          <div className="w-16 h-16 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center mx-auto mb-4">
+            <Award size={32} />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Belum Ada Sertifikat</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
+            Data sertifikasi profesi & pelatihan TIK belum ditambahkan di database.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-14">
+          {/* Section 1: Sertifikasi Profesi & Industri */}
         {(activeTab === 'all' || activeTab === 'certs') && (
           <div className="space-y-6">
             {activeTab === 'all' && (
@@ -76,7 +91,7 @@ const Certificates = () => {
             )}
 
             <div className="flex flex-wrap justify-center gap-5 sm:gap-6">
-              {mockCertificates.map((cert) => (
+              {profCerts.map((cert) => (
                 <motion.div
                   key={cert.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -193,7 +208,7 @@ const Certificates = () => {
             )}
 
             <div className="flex flex-wrap justify-center gap-5 sm:gap-6">
-              {mockTrainings.map((tr) => (
+              {trainings.map((tr) => (
                 <motion.div
                   key={tr.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -282,6 +297,7 @@ const Certificates = () => {
         )}
 
       </div>
+      )}
 
       {/* Modal Dialog Viewer (PDF / Image) */}
       <AnimatePresence>

@@ -1,6 +1,7 @@
 export const profileInfo = {
   name: "Natanael Ruswandi",
   title: "Junior Web Developer & Network Administrator",
+  subtitles: ["Junior Web Developer", "Junior Network Administrator", "UI/UX & Mobile Developer"],
   subtitles_id: ["Junior Web Developer", "Junior Network Administrator", "UI/UX & Mobile Developer"],
   subtitles_en: ["Junior Web Developer", "Junior Network Administrator", "UI/UX & Mobile Developer"],
   bio_id: "Nama saya Natanael Ruswandi. Saya memiliki minat dalam bidang teknologi, desain, dan pengembangan aplikasi, khususnya pada perancangan sistem, UI/UX, serta pembuatan aplikasi berbasis web maupun mobile. Saya senang mempelajari hal-hal baru yang berkaitan dengan teknologi dan berusaha mengembangkan kemampuan untuk menghasilkan karya yang bermanfaat serta sesuai dengan kebutuhan pengguna.",

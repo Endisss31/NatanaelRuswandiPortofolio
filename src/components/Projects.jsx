@@ -1,20 +1,21 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ExternalLink, ArrowUpRight } from 'lucide-react'
+import { ExternalLink, ArrowUpRight, FolderGit2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { mockProjects } from '../data/mockData'
 import { useLanguage } from '../context/LanguageContext'
+import { usePortfolioData } from '../lib/usePortfolioData'
 
 const Projects = ({ onSelectProject }) => {
   const { t, lang } = useLanguage()
+  const { projects } = usePortfolioData()
   const [activeFilter, setActiveFilter] = useState('All')
   const navigate = useNavigate()
 
   const filters = ['All', 'Web', 'Mobile']
 
   const filteredProjects = activeFilter === 'All'
-    ? mockProjects
-    : mockProjects.filter(p => p.category === activeFilter)
+    ? projects
+    : projects.filter(p => p.category === activeFilter)
 
   const handleOpenDetail = (id) => {
     if (onSelectProject) {
@@ -52,6 +53,21 @@ const Projects = ({ onSelectProject }) => {
           </button>
         ))}
       </div>
+
+      {/* Empty State */}
+      {filteredProjects.length === 0 && (
+        <div className="py-16 text-center glass-panel rounded-2xl p-8 max-w-lg mx-auto border border-dashed border-slate-300 dark:border-slate-800">
+          <div className="w-16 h-16 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center mx-auto mb-4">
+            <FolderGit2 size={32} />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Belum Ada Proyek</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
+            {activeFilter === 'All'
+              ? 'Data proyek belum ditambahkan di database. Anda dapat menambahkan proyek baru melalui Admin Dashboard.'
+              : `Belum ada proyek dalam kategori "${activeFilter}".`}
+          </p>
+        </div>
+      )}
 
       {/* 3 Grid Layout Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">

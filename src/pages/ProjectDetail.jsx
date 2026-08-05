@@ -13,20 +13,25 @@ import {
 } from 'lucide-react'
 import { mockProjects, profileInfo } from '../data/mockData'
 import { useLanguage } from '../context/LanguageContext'
+import { usePortfolioData } from '../lib/usePortfolioData'
 import SEOHead from '../components/SEO/SEOHead'
 
 const ProjectDetail = ({ projectId: propProjectId, onBack }) => {
   const { t } = useLanguage()
+  const { projects } = usePortfolioData()
   const params = useParams()
   const navigate = useNavigate ? useNavigate() : null
 
   const projectId = propProjectId || params?.id || 'p3'
 
-  const project = mockProjects.find(p => p.id === projectId) || mockProjects[2] // Fallback to SilatPRO (p3)
+  const allProjects = projects && projects.length > 0 ? projects : mockProjects
+  const project = allProjects.find(p => p.id === projectId || String(p.id) === String(projectId)) || allProjects[0] || mockProjects[0]
 
-  const galleryImages = project.gallery && project.gallery.length > 0 
-    ? project.gallery 
-    : [project.image_url]
+  const galleryImages = Array.isArray(project.gallery) && project.gallery.length > 0
+    ? project.gallery
+    : (typeof project.gallery === 'string' && project.gallery.trim()
+        ? project.gallery.split(',').map(s => s.trim()).filter(Boolean)
+        : [project.image_url || '/assets/images/project.jpg'])
 
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)

@@ -1,11 +1,12 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Briefcase, MapPin, Calendar } from 'lucide-react'
-import { mockExperiences } from '../data/mockData'
 import { useLanguage } from '../context/LanguageContext'
+import { usePortfolioData } from '../lib/usePortfolioData'
 
 const Experience = () => {
   const { t } = useLanguage()
+  const { experiences } = usePortfolioData()
 
   return (
     <div className="max-w-5xl mx-auto px-6 sm:px-8">
@@ -19,8 +20,19 @@ const Experience = () => {
         </p>
       </div>
 
-      <div className="space-y-8">
-        {mockExperiences.map((exp) => (
+      {experiences.length === 0 ? (
+        <div className="py-16 text-center glass-panel rounded-2xl p-8 max-w-lg mx-auto border border-dashed border-slate-300 dark:border-slate-800">
+          <div className="w-16 h-16 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center mx-auto mb-4">
+            <Briefcase size={32} />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Belum Ada Pengalaman Kerja</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
+            Riwayat pengalaman kerja & magang belum ditambahkan di database.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {experiences.map((exp) => (
           <motion.div
             key={exp.id}
             initial={{ opacity: 0, y: 20 }}
@@ -61,6 +73,7 @@ const Experience = () => {
           </motion.div>
         ))}
       </div>
+      )}
     </div>
   )
 }

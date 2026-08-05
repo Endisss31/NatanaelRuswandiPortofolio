@@ -4,10 +4,11 @@ import { Github, Linkedin, Instagram, Mail, FileDown, ArrowRight, MessageSquareC
 import { FaWhatsapp } from 'react-icons/fa'
 import { profileInfo } from '../data/mockData'
 import { useLanguage } from '../context/LanguageContext'
+import { usePortfolioData } from '../lib/usePortfolioData'
 import Silk from './Silk'
 import BounceCards from './BounceCards'
 
-const heroImages = [
+const defaultHeroImages = [
   "/assets/images/profile1.jpeg",
   "/assets/images/profile2.png",
   "/assets/images/profile3.jpg"
@@ -22,9 +23,21 @@ const transformStyles = [
 
 const Hero = () => {
   const { t, lang } = useLanguage()
+  const { profile } = usePortfolioData()
 
-  const displayBio = lang === 'en' ? profileInfo.bio_en : profileInfo.bio_id
-  const words = lang === 'en' ? profileInfo.subtitles_en : profileInfo.subtitles_id
+  const currentProfile = profile || profileInfo
+
+  const heroImages = Array.isArray(currentProfile.profile_images) && currentProfile.profile_images.length >= 3
+    ? currentProfile.profile_images
+    : [
+        currentProfile.profile_image_1 || defaultHeroImages[0],
+        currentProfile.profile_image_2 || defaultHeroImages[1],
+        currentProfile.profile_image_3 || currentProfile.profile_image || defaultHeroImages[2]
+      ]
+
+  const displayBio = (lang === 'en' ? (currentProfile.bio_en || currentProfile.bio) : (currentProfile.bio_id || currentProfile.bio)) || ''
+  const wordsRaw = lang === 'en' ? (currentProfile.subtitles_en || currentProfile.subtitles) : (currentProfile.subtitles_id || currentProfile.subtitles)
+  const words = Array.isArray(wordsRaw) ? wordsRaw : (typeof wordsRaw === 'string' ? wordsRaw.split(',').map(s => s.trim()) : [])
 
   const [wordIndex, setWordIndex] = useState(0)
   const [currentText, setCurrentText] = useState('')
