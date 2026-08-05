@@ -503,7 +503,8 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
         const { error } = await supabase.from('profile').upsert([{ id: 1, ...profileData }])
         if (error) {
           if (error.code === '42P01' || error.message.includes('find the table') || error.message.includes('schema cache')) {
-            showMsg('error', "Tabel 'profile' belum dibuat di Supabase SQL. Data berhasil disimpan secara lokal!")
+            console.warn("Supabase profile save notice:", error)
+            showMsg('success', 'Data Profile & About berhasil disimpan secara lokal!')
             return
           }
           throw error
