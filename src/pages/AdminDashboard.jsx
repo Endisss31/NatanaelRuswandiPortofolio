@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  FolderGit2, Award, Briefcase, FileUp, LogOut, 
+import {
+  FolderGit2, Award, Briefcase, FileUp, LogOut,
   Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle2, Sun, Moon, User, Image, Sparkles, GraduationCap, Languages, Menu, Calendar
 } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
@@ -74,7 +74,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('hero')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  
+
   // Data States
   const [projects, setProjects] = useState([])
   const [skills, setSkills] = useState([])
@@ -165,7 +165,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   const [loading, setLoading] = useState(true)
   const [msg, setMsg] = useState({ type: '', text: '' })
   const [editingId, setEditingId] = useState(null)
-  
+
   // Form states
   const [projectForm, setProjectForm] = useState({ title: '', description: '', image_url: '', gallery: [], tech_stack: '', github_link: '', live_link: '', category: 'Web' })
   const [skillForm, setSkillForm] = useState({ name: '', category: 'Frontend', proficiency: 80 })
@@ -179,7 +179,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
       if (isSupabaseConfigured && supabase) {
         await supabase.auth.signOut()
       }
-    } catch (e) {}
+    } catch (e) { }
     localStorage.removeItem('mock_admin_session')
     navigate('/admin/login', { replace: true })
   }
@@ -234,14 +234,14 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
           const mergedProjects = pData.data.map(p => {
             const matchedLocal = localProjectsMap[p.id] || localProjectsMap[p.title]
-            const galleryList = Array.isArray(p.gallery) && p.gallery.length > 0 
-              ? p.gallery 
+            const galleryList = Array.isArray(p.gallery) && p.gallery.length > 0
+              ? p.gallery
               : (matchedLocal && Array.isArray(matchedLocal.gallery) && matchedLocal.gallery.length > 0 ? matchedLocal.gallery : (p.image_url ? [p.image_url] : []))
             return { ...p, gallery: galleryList }
           })
 
           setProjects(mergedProjects)
-          localStorage.setItem('db_projects', JSON.stringify(mergedProjects))
+          persistLocalData('db_projects', mergedProjects)
         } else {
           const localP = localStorage.getItem('db_projects')
           setProjects(localP ? JSON.parse(localP) : [])
@@ -249,7 +249,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
         if (!sData.error && sData.data) {
           setSkills(sData.data)
-          localStorage.setItem('db_skills', JSON.stringify(sData.data))
+          persistLocalData('db_skills', sData.data)
         } else {
           const localS = localStorage.getItem('db_skills')
           setSkills(localS ? JSON.parse(localS) : [])
@@ -257,7 +257,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
         if (!eData.error && eData.data) {
           setExperiences(eData.data)
-          localStorage.setItem('db_experiences', JSON.stringify(eData.data))
+          persistLocalData('db_experiences', eData.data)
         } else {
           const localE = localStorage.getItem('db_experiences')
           setExperiences(localE ? JSON.parse(localE) : [])
@@ -282,7 +282,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
           })
 
           setCertificates(mergedCertificates)
-          localStorage.setItem('db_certificates', JSON.stringify(mergedCertificates))
+          persistLocalData('db_certificates', mergedCertificates)
         } else {
           const localC = localStorage.getItem('db_certificates')
           setCertificates(localC ? JSON.parse(localC) : [])
@@ -292,7 +292,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
         try {
           const { data: prof, error: profErr } = await supabase.from('profile').select('*').single()
           if (!profErr && prof) {
-            localStorage.setItem('db_profile', JSON.stringify(prof))
+            persistLocalData('db_profile', prof)
             setHeroForm({
               name: prof.name || '',
               subtitles: safeJoin(prof.subtitles, ''),
@@ -500,16 +500,18 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
       window.dispatchEvent(new Event('portfolio_data_updated'))
 
       if (isSupabaseConfigured && supabase) {
-        const { error } = await supabase.from('profile').upsert([{ id: 1, ...profileData }])
-        if (error) {
-          if (error.code === '42P01' || error.message.includes('find the table') || error.message.includes('schema cache')) {
-            console.warn("Supabase profile save notice:", error)
-            showMsg('success', 'Data Profile & About berhasil disimpan secara lokal!')
+        try {
+          const { error } = await supabase.from('profile').upsert([{ id: 1, ...profileData }])
+          if (error) {
+            console.warn("Supabase profile sync note:", error.message || error)
+            showMsg('success', 'Data tersimpan lokal. (Jalankan supabase_schema.sql jika ingin sinkron ke cloud Supabase)')
             return
           }
-          throw error
+          showMsg('success', 'Profile, About, & Education berhasil disimpan ke Supabase!')
+        } catch (subErr) {
+          console.warn("Supabase connection note:", subErr)
+          showMsg('success', 'Data Profile & About berhasil disimpan secara lokal!')
         }
-        showMsg('success', 'Profile, About, & Education saved successfully!')
       } else {
         showMsg('success', 'Profile, About, & Education saved locally (Preview mode).')
       }
@@ -530,8 +532,18 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
       localStorage.setItem(key, JSON.stringify(data))
       window.dispatchEvent(new Event('portfolio_data_updated'))
     } catch (err) {
-      console.warn(`localStorage quota exceeded for ${key}:`, err)
-      showMsg('error', 'Ruang penyimpanan lokal penuh. Foto telah di-kompresi otomatis!')
+      console.warn(`localStorage quota exceeded for ${key}, sanitizing large data...`, err)
+      try {
+        const sanitized = JSON.parse(JSON.stringify(data), (k, v) => {
+          if (typeof v === 'string' && v.startsWith('data:') && v.length > 50000) {
+            return ''
+          }
+          return v
+        })
+        localStorage.setItem(key, JSON.stringify(sanitized))
+      } catch (retryErr) {
+        console.warn(`localStorage quota fallback failed for ${key}:`, retryErr)
+      }
       window.dispatchEvent(new Event('portfolio_data_updated'))
     }
   }
@@ -545,15 +557,15 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     e.preventDefault()
     if (!projectForm.title || !projectForm.description) return
 
-    const formattedTech = typeof projectForm.tech_stack === 'string' 
+    const formattedTech = typeof projectForm.tech_stack === 'string'
       ? projectForm.tech_stack.split(',').map(s => s.trim()).filter(Boolean)
       : projectForm.tech_stack;
 
     const formattedGallery = Array.isArray(projectForm.gallery)
       ? projectForm.gallery
       : (typeof projectForm.gallery === 'string'
-          ? projectForm.gallery.split(',').map(s => s.trim()).filter(Boolean)
-          : (projectForm.image_url ? [projectForm.image_url] : []))
+        ? projectForm.gallery.split(',').map(s => s.trim()).filter(Boolean)
+        : (projectForm.image_url ? [projectForm.image_url] : []))
 
     const payload = {
       title: projectForm.title,
@@ -600,28 +612,27 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
     }
   }
 
-  // Helper to check if an ID is a pure numeric database ID from Supabase (not mock string like 'p3', 's1', or 'p_local_...')
-  const isNumericId = (id) => typeof id === 'number' || (typeof id === 'string' && /^\d+$/.test(id))
-
   const deleteProject = async (id) => {
-    if (!window.confirm('Delete this project?')) return
+    if (!window.confirm('Hapus proyek ini?')) return
     try {
-      const updated = projects.filter(p => p.id !== id)
+      const updated = projects.filter(p => String(p.id) !== String(id))
       setProjects(updated)
       persistLocalData('db_projects', updated)
 
-      if (isSupabaseConfigured && supabase && isNumericId(id)) {
+      if (isSupabaseConfigured && supabase) {
         try {
-          await supabase.from('projects').delete().eq('id', Number(id))
+          await supabase.from('projects').delete().eq('id', String(id))
+          if (/^\d+$/.test(String(id))) {
+            await supabase.from('projects').delete().eq('id', Number(id))
+          }
         } catch (subErr) {
           console.warn("Supabase project delete notice:", subErr)
         }
       }
 
-      showMsg('success', 'Project removed.')
-      loadAllData()
+      showMsg('success', 'Proyek berhasil dihapus.')
     } catch (err) {
-      showMsg('error', 'Delete operation failed.')
+      showMsg('error', 'Gagal menghapus proyek.')
     }
   }
 
@@ -641,7 +652,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
             galleryList = matched.gallery
           }
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     if (galleryList.length === 0 && p.image_url) {
@@ -712,24 +723,26 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   }
 
   const deleteSkill = async (id) => {
-    if (!window.confirm('Delete this skill?')) return
+    if (!window.confirm('Hapus skill ini?')) return
     try {
-      const updated = skills.filter(s => s.id !== id)
+      const updated = skills.filter(s => String(s.id) !== String(id))
       setSkills(updated)
       persistLocalData('db_skills', updated)
 
-      if (isSupabaseConfigured && supabase && isNumericId(id)) {
+      if (isSupabaseConfigured && supabase) {
         try {
-          await supabase.from('skills').delete().eq('id', Number(id))
+          await supabase.from('skills').delete().eq('id', String(id))
+          if (/^\d+$/.test(String(id))) {
+            await supabase.from('skills').delete().eq('id', Number(id))
+          }
         } catch (subErr) {
           console.warn("Supabase skill delete notice:", subErr)
         }
       }
 
-      showMsg('success', 'Skill deleted.')
-      loadAllData()
+      showMsg('success', 'Skill berhasil dihapus.')
     } catch (err) {
-      showMsg('error', 'Delete operation failed.')
+      showMsg('error', 'Gagal menghapus skill.')
     }
   }
 
@@ -788,24 +801,26 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   }
 
   const deleteExperience = async (id) => {
-    if (!window.confirm('Delete this record?')) return
+    if (!window.confirm('Hapus pengalaman ini?')) return
     try {
-      const updated = experiences.filter(ex => ex.id !== id)
+      const updated = experiences.filter(ex => String(ex.id) !== String(id))
       setExperiences(updated)
       persistLocalData('db_experiences', updated)
 
-      if (isSupabaseConfigured && supabase && isNumericId(id)) {
+      if (isSupabaseConfigured && supabase) {
         try {
-          await supabase.from('experiences').delete().eq('id', Number(id))
+          await supabase.from('experiences').delete().eq('id', String(id))
+          if (/^\d+$/.test(String(id))) {
+            await supabase.from('experiences').delete().eq('id', Number(id))
+          }
         } catch (subErr) {
           console.warn("Supabase experience delete notice:", subErr)
         }
       }
 
-      showMsg('success', 'Record removed.')
-      loadAllData()
+      showMsg('success', 'Pengalaman berhasil dihapus.')
     } catch (err) {
-      showMsg('error', 'Delete operation failed.')
+      showMsg('error', 'Gagal menghapus pengalaman.')
     }
   }
 
@@ -849,31 +864,38 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
       if (isSupabaseConfigured && supabase) {
         try {
           const dbPayload = {
-            title: certForm.title,
-            issuer: certForm.issuer,
-            date: certForm.date,
-            image_url: certForm.image_url || '/assets/images/project.jpg',
-            credential_url: certForm.credential_url || ''
+            ...payload
           }
 
           if (editingId) {
-            let { error } = await supabase.from('certificates').update(payload).eq('id', editingId)
-            if (error && (error.code === 'PGRST204' || (error.message && error.message.includes('column')))) {
-              const retryRes = await supabase.from('certificates').update(dbPayload).eq('id', editingId)
-              if (retryRes.error) throw retryRes.error
-            } else if (error) {
-              throw error
+            let { error } = await supabase.from('certificates').update(dbPayload).eq('id', String(editingId))
+            if (error) {
+              // Retry with fallback schema
+              const fallbackPayload = {
+                title: certForm.title,
+                issuer: certForm.issuer,
+                date: certForm.date,
+                image_url: certForm.image_url || '/assets/images/project.jpg',
+                credential_url: certForm.credential_url || ''
+              }
+              const retryRes = await supabase.from('certificates').update(fallbackPayload).eq('id', String(editingId))
+              if (retryRes.error) console.warn("Supabase certificate update notice:", retryRes.error)
             }
           } else {
-            let { error } = await supabase.from('certificates').insert([payload])
-            if (error && (error.code === 'PGRST204' || (error.message && error.message.includes('column')))) {
-              const retryRes = await supabase.from('certificates').insert([dbPayload])
-              if (retryRes.error) throw retryRes.error
-            } else if (error) {
-              throw error
+            let { error } = await supabase.from('certificates').insert([{ id: `c_${Date.now()}`, ...dbPayload }])
+            if (error) {
+              const fallbackPayload = {
+                title: certForm.title,
+                issuer: certForm.issuer,
+                date: certForm.date,
+                image_url: certForm.image_url || '/assets/images/project.jpg',
+                credential_url: certForm.credential_url || ''
+              }
+              const retryRes = await supabase.from('certificates').insert([fallbackPayload])
+              if (retryRes.error) console.warn("Supabase certificate insert notice:", retryRes.error)
             }
           }
-          showMsg('success', 'Sertifikat berhasil disimpan ke database & lokal!')
+          showMsg('success', 'Sertifikat berhasil disimpan!')
         } catch (subErr) {
           console.warn("Supabase certificate save notice:", subErr)
           showMsg('success', 'Sertifikat berhasil disimpan secara lokal!')
@@ -890,24 +912,26 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
   }
 
   const deleteCertificate = async (id) => {
-    if (!window.confirm('Delete this certificate?')) return
+    if (!window.confirm('Hapus sertifikat ini?')) return
     try {
-      const updated = certificates.filter(c => c.id !== id)
+      const updated = certificates.filter(c => String(c.id) !== String(id))
       setCertificates(updated)
       persistLocalData('db_certificates', updated)
 
-      if (isSupabaseConfigured && supabase && isNumericId(id)) {
+      if (isSupabaseConfigured && supabase) {
         try {
-          await supabase.from('certificates').delete().eq('id', Number(id))
+          await supabase.from('certificates').delete().eq('id', String(id))
+          if (/^\d+$/.test(String(id))) {
+            await supabase.from('certificates').delete().eq('id', Number(id))
+          }
         } catch (subErr) {
           console.warn("Supabase certificate delete notice:", subErr)
         }
       }
 
-      showMsg('success', 'Certificate removed.')
-      loadAllData()
+      showMsg('success', 'Sertifikat berhasil dihapus.')
     } catch (err) {
-      showMsg('error', 'Delete operation failed.')
+      showMsg('error', 'Gagal menghapus sertifikat.')
     }
   }
 
@@ -985,7 +1009,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
       if (type === 'cv') {
         try {
           localStorage.setItem('db_cv', base64Url)
-        } catch (err) {}
+        } catch (err) { }
         setCvUrl(base64Url)
       }
 
@@ -997,15 +1021,15 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-300">
-      
+
       {/* Mobile Top Header & Collapsible Hamburger Navigation */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img 
-              src="/LogoNR.png" 
-              alt="Natanael Ruswandi Logo" 
-              className="w-8 h-8 object-contain rounded-lg border border-slate-200 dark:border-slate-800 p-0.5 bg-white dark:bg-slate-900 shadow-sm" 
+            <img
+              src="/LogoNR.png"
+              alt="Natanael Ruswandi Logo"
+              className="w-8 h-8 object-contain rounded-lg border border-slate-200 dark:border-slate-800 p-0.5 bg-white dark:bg-slate-900 shadow-sm"
             />
             <div>
               <h2 className="font-bold text-slate-900 dark:text-white leading-tight text-xs sm:text-sm">Natanael Ruswandi</h2>
@@ -1057,11 +1081,10 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                   setEditingId(null)
                   setMobileMenuOpen(false)
                 }}
-                className={`w-full px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-3 transition-colors ${
-                  activeTab === tab.id
+                className={`w-full px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-3 transition-colors ${activeTab === tab.id
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800/50'
-                }`}
+                  }`}
               >
                 {tab.icon}
                 {tab.label}
@@ -1090,10 +1113,10 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
           {/* Header Branding */}
           <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-200 dark:border-slate-800">
             <div className="flex items-center gap-2.5">
-              <img 
-                src="/LogoNR.png" 
-                alt="Natanael Ruswandi Logo" 
-                className="w-9 h-9 object-contain rounded-lg border border-slate-200 dark:border-slate-800 p-0.5 bg-white dark:bg-slate-900 shadow-sm" 
+              <img
+                src="/LogoNR.png"
+                alt="Natanael Ruswandi Logo"
+                className="w-9 h-9 object-contain rounded-lg border border-slate-200 dark:border-slate-800 p-0.5 bg-white dark:bg-slate-900 shadow-sm"
               />
               <div>
                 <h2 className="font-bold text-slate-900 dark:text-white leading-tight text-sm">Natanael Ruswandi</h2>
@@ -1131,11 +1154,10 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
               <button
                 key={tab.id}
                 onClick={() => { setActiveTab(tab.id); setEditingId(null); }}
-                className={`w-full px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-3 transition-colors ${
-                  activeTab === tab.id
+                className={`w-full px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-3 transition-colors ${activeTab === tab.id
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800/50'
-                }`}
+                  }`}
               >
                 {tab.icon}
                 {tab.label}
@@ -1158,14 +1180,13 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
       {/* Main Panel Content */}
       <main className="flex-1 pt-20 px-4 pb-10 md:pt-10 md:px-10 overflow-y-auto md:max-h-screen no-scrollbar">
-        
+
         {/* Banner Alert notifications */}
         {msg.text && (
-          <div className={`p-4 rounded-xl flex items-center gap-2 mb-6 border text-sm font-semibold ${
-            msg.type === 'error' 
-              ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' 
+          <div className={`p-4 rounded-xl flex items-center gap-2 mb-6 border text-sm font-semibold ${msg.type === 'error'
+              ? 'bg-rose-500/10 border-rose-500/20 text-rose-400'
               : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-          }`}>
+            }`}>
             {msg.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
             {msg.text}
           </div>
@@ -1188,7 +1209,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
           </div>
         ) : (
           <div className="space-y-8">
-            
+
             {/* ========================================================
                PROFILE, ABOUT & EDUCATION VIEW
                ======================================================== */}
@@ -1219,19 +1240,19 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                       {translating ? 'Menerjemahkan...' : '✨ Terjemahkan Otomatis ke Inggris'}
                     </button>
                   </div>
-                  
+
                   {/* Name & Roles */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                         Full Name
                       </label>
-                      <input 
-                        type="text" 
-                        value={heroForm.name} 
-                        onChange={(e) => setHeroForm({...heroForm, name: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="Natanael Ruswandi" 
+                      <input
+                        type="text"
+                        value={heroForm.name}
+                        onChange={(e) => setHeroForm({ ...heroForm, name: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="Natanael Ruswandi"
                         required
                       />
                     </div>
@@ -1242,12 +1263,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                           Peran / Subtitle Animasi (Bahasa Indonesia)
                         </label>
-                        <input 
-                          type="text" 
-                          value={heroForm.subtitles_id} 
-                          onChange={(e) => setHeroForm({...heroForm, subtitles_id: e.target.value, subtitles: e.target.value})}
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                          placeholder="Pengembang AI, Spesialis Computer Vision" 
+                        <input
+                          type="text"
+                          value={heroForm.subtitles_id}
+                          onChange={(e) => setHeroForm({ ...heroForm, subtitles_id: e.target.value, subtitles: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                          placeholder="Pengembang AI, Spesialis Computer Vision"
                           required
                         />
                       </div>
@@ -1255,12 +1276,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                           Animated Subtitles / Roles (English - Opsional)
                         </label>
-                        <input 
-                          type="text" 
-                          value={heroForm.subtitles_en} 
-                          onChange={(e) => setHeroForm({...heroForm, subtitles_en: e.target.value})}
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                          placeholder="Kosongkan untuk otomatis terjemah" 
+                        <input
+                          type="text"
+                          value={heroForm.subtitles_en}
+                          onChange={(e) => setHeroForm({ ...heroForm, subtitles_en: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                          placeholder="Kosongkan untuk otomatis terjemah"
                         />
                       </div>
                     </div>
@@ -1272,11 +1293,11 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                         Hero Bio (Bahasa Indonesia)
                       </label>
-                      <textarea 
-                        value={heroForm.bio_id} 
-                        onChange={(e) => setHeroForm({...heroForm, bio_id: e.target.value, bio: e.target.value})}
-                        rows="3" 
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                      <textarea
+                        value={heroForm.bio_id}
+                        onChange={(e) => setHeroForm({ ...heroForm, bio_id: e.target.value, bio: e.target.value })}
+                        rows="3"
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none"
                         placeholder="Pengembang & Desainer Kreatif yang berfokus..."
                         required
                       />
@@ -1285,11 +1306,11 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                         Hero Bio (English - Opsional)
                       </label>
-                      <textarea 
-                        value={heroForm.bio_en} 
-                        onChange={(e) => setHeroForm({...heroForm, bio_en: e.target.value})}
-                        rows="3" 
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                      <textarea
+                        value={heroForm.bio_en}
+                        onChange={(e) => setHeroForm({ ...heroForm, bio_en: e.target.value })}
+                        rows="3"
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none"
                         placeholder="Kosongkan untuk otomatis terjemah..."
                       />
                     </div>
@@ -1313,28 +1334,28 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                           1. Foto Kiri
                         </label>
                         <div className="h-36 rounded-xl border border-slate-300 dark:border-slate-800 overflow-hidden bg-slate-200 dark:bg-slate-900">
-                          <img 
-                            src={heroForm.profile_image_1 || '/assets/images/profile1.jpeg'} 
-                            alt="Foto 1" 
-                            className="w-full h-full object-cover" 
+                          <img
+                            src={heroForm.profile_image_1 || '/assets/images/profile1.jpeg'}
+                            alt="Foto 1"
+                            className="w-full h-full object-cover"
                             onError={(e) => { e.target.src = '/assets/images/profile1.jpeg' }}
                           />
                         </div>
                         <div className="flex gap-2">
-                          <input 
-                            type="text" 
-                            value={heroForm.profile_image_1} 
-                            onChange={(e) => setHeroForm({...heroForm, profile_image_1: e.target.value})}
-                            className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white" 
-                            placeholder="URL Foto 1" 
+                          <input
+                            type="text"
+                            value={heroForm.profile_image_1}
+                            onChange={(e) => setHeroForm({ ...heroForm, profile_image_1: e.target.value })}
+                            className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white"
+                            placeholder="URL Foto 1"
                           />
                           <label className="px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors shadow-sm">
                             Upload
-                            <input 
-                              type="file" 
-                              accept="image/*" 
-                              className="hidden" 
-                              onChange={(e) => handleFileUpload(e, 'profile1', (url) => setHeroForm({...heroForm, profile_image_1: url}))}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleFileUpload(e, 'profile1', (url) => setHeroForm({ ...heroForm, profile_image_1: url }))}
                             />
                           </label>
                         </div>
@@ -1346,28 +1367,28 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                           2. Foto Tengah (Utama)
                         </label>
                         <div className="h-36 rounded-xl border border-slate-300 dark:border-slate-800 overflow-hidden bg-slate-200 dark:bg-slate-900">
-                          <img 
-                            src={heroForm.profile_image_2 || '/assets/images/profile2.png'} 
-                            alt="Foto 2" 
-                            className="w-full h-full object-cover" 
+                          <img
+                            src={heroForm.profile_image_2 || '/assets/images/profile2.png'}
+                            alt="Foto 2"
+                            className="w-full h-full object-cover"
                             onError={(e) => { e.target.src = '/assets/images/profile2.png' }}
                           />
                         </div>
                         <div className="flex gap-2">
-                          <input 
-                            type="text" 
-                            value={heroForm.profile_image_2} 
-                            onChange={(e) => setHeroForm({...heroForm, profile_image_2: e.target.value})}
-                            className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white" 
-                            placeholder="URL Foto 2" 
+                          <input
+                            type="text"
+                            value={heroForm.profile_image_2}
+                            onChange={(e) => setHeroForm({ ...heroForm, profile_image_2: e.target.value })}
+                            className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white"
+                            placeholder="URL Foto 2"
                           />
                           <label className="px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors shadow-sm">
                             Upload
-                            <input 
-                              type="file" 
-                              accept="image/*" 
-                              className="hidden" 
-                              onChange={(e) => handleFileUpload(e, 'profile2', (url) => setHeroForm({...heroForm, profile_image_2: url}))}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleFileUpload(e, 'profile2', (url) => setHeroForm({ ...heroForm, profile_image_2: url }))}
                             />
                           </label>
                         </div>
@@ -1379,28 +1400,28 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                           3. Foto Kanan
                         </label>
                         <div className="h-36 rounded-xl border border-slate-300 dark:border-slate-800 overflow-hidden bg-slate-200 dark:bg-slate-900">
-                          <img 
-                            src={heroForm.profile_image_3 || '/assets/images/profile3.jpg'} 
-                            alt="Foto 3" 
-                            className="w-full h-full object-cover" 
+                          <img
+                            src={heroForm.profile_image_3 || '/assets/images/profile3.jpg'}
+                            alt="Foto 3"
+                            className="w-full h-full object-cover"
                             onError={(e) => { e.target.src = '/assets/images/profile3.jpg' }}
                           />
                         </div>
                         <div className="flex gap-2">
-                          <input 
-                            type="text" 
-                            value={heroForm.profile_image_3} 
-                            onChange={(e) => setHeroForm({...heroForm, profile_image_3: e.target.value})}
-                            className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white" 
-                            placeholder="URL Foto 3" 
+                          <input
+                            type="text"
+                            value={heroForm.profile_image_3}
+                            onChange={(e) => setHeroForm({ ...heroForm, profile_image_3: e.target.value })}
+                            className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white"
+                            placeholder="URL Foto 3"
                           />
                           <label className="px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors shadow-sm">
                             Upload
-                            <input 
-                              type="file" 
-                              accept="image/*" 
-                              className="hidden" 
-                              onChange={(e) => handleFileUpload(e, 'profile3', (url) => setHeroForm({...heroForm, profile_image_3: url}))}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleFileUpload(e, 'profile3', (url) => setHeroForm({ ...heroForm, profile_image_3: url }))}
                             />
                           </label>
                         </div>
@@ -1412,42 +1433,42 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200 dark:border-slate-800 pt-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">GitHub URL</label>
-                      <input 
-                        type="url" 
-                        value={heroForm.github} 
-                        onChange={(e) => setHeroForm({...heroForm, github: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="https://github.com/username" 
+                      <input
+                        type="url"
+                        value={heroForm.github}
+                        onChange={(e) => setHeroForm({ ...heroForm, github: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="https://github.com/username"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">LinkedIn URL</label>
-                      <input 
-                        type="url" 
-                        value={heroForm.linkedin} 
-                        onChange={(e) => setHeroForm({...heroForm, linkedin: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="https://linkedin.com/in/username" 
+                      <input
+                        type="url"
+                        value={heroForm.linkedin}
+                        onChange={(e) => setHeroForm({ ...heroForm, linkedin: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="https://linkedin.com/in/username"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Instagram URL</label>
-                      <input 
-                        type="url" 
-                        value={heroForm.instagram} 
-                        onChange={(e) => setHeroForm({...heroForm, instagram: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="https://instagram.com/username" 
+                      <input
+                        type="url"
+                        value={heroForm.instagram}
+                        onChange={(e) => setHeroForm({ ...heroForm, instagram: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="https://instagram.com/username"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Email Contact</label>
-                      <input 
-                        type="text" 
-                        value={heroForm.email} 
-                        onChange={(e) => setHeroForm({...heroForm, email: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="mailto:your-email@example.com" 
+                      <input
+                        type="text"
+                        value={heroForm.email}
+                        onChange={(e) => setHeroForm({ ...heroForm, email: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="mailto:your-email@example.com"
                       />
                     </div>
                   </div>
@@ -1462,11 +1483,11 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                           Misi Saya (Bahasa Indonesia)
                         </label>
-                        <textarea 
-                          value={heroForm.mission_id} 
-                          onChange={(e) => setHeroForm({...heroForm, mission_id: e.target.value, mission: e.target.value})}
-                          rows="3" 
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                        <textarea
+                          value={heroForm.mission_id}
+                          onChange={(e) => setHeroForm({ ...heroForm, mission_id: e.target.value, mission: e.target.value })}
+                          rows="3"
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none"
                           placeholder="Saya berdedikasi membangun platform..."
                         />
                       </div>
@@ -1474,11 +1495,11 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                           My Mission Statement (English)
                         </label>
-                        <textarea 
-                          value={heroForm.mission_en} 
-                          onChange={(e) => setHeroForm({...heroForm, mission_en: e.target.value})}
-                          rows="3" 
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                        <textarea
+                          value={heroForm.mission_en}
+                          onChange={(e) => setHeroForm({ ...heroForm, mission_en: e.target.value })}
+                          rows="3"
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none"
                           placeholder="I am dedicated to building high-quality platforms..."
                         />
                       </div>
@@ -1488,22 +1509,22 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Years Projects Stat</label>
-                        <input 
-                          type="text" 
-                          value={heroForm.years_exp} 
-                          onChange={(e) => setHeroForm({...heroForm, years_exp: e.target.value})}
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                          placeholder="3+" 
+                        <input
+                          type="text"
+                          value={heroForm.years_exp}
+                          onChange={(e) => setHeroForm({ ...heroForm, years_exp: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                          placeholder="3+"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Completed Apps Stat</label>
-                        <input 
-                          type="text" 
-                          value={heroForm.projects_count} 
-                          onChange={(e) => setHeroForm({...heroForm, projects_count: e.target.value})}
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                          placeholder="20+" 
+                        <input
+                          type="text"
+                          value={heroForm.projects_count}
+                          onChange={(e) => setHeroForm({ ...heroForm, projects_count: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                          placeholder="20+"
                         />
                       </div>
                     </div>
@@ -1514,11 +1535,11 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                           Fokus Karir (Bahasa Indonesia)
                         </label>
-                        <textarea 
-                          value={heroForm.career_goals_id} 
-                          onChange={(e) => setHeroForm({...heroForm, career_goals_id: e.target.value, career_goals: e.target.value})}
-                          rows="3" 
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                        <textarea
+                          value={heroForm.career_goals_id}
+                          onChange={(e) => setHeroForm({ ...heroForm, career_goals_id: e.target.value, career_goals: e.target.value })}
+                          rows="3"
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none"
                           placeholder="Tujuan utama saya adalah melahirkan inovasi..."
                         />
                       </div>
@@ -1526,11 +1547,11 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                           Career Focus / Goals (English)
                         </label>
-                        <textarea 
-                          value={heroForm.career_goals_en} 
-                          onChange={(e) => setHeroForm({...heroForm, career_goals_en: e.target.value})}
-                          rows="3" 
-                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                        <textarea
+                          value={heroForm.career_goals_en}
+                          onChange={(e) => setHeroForm({ ...heroForm, career_goals_en: e.target.value })}
+                          rows="3"
+                          className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none"
                           placeholder="My ultimate goal is to pioneer solutions..."
                         />
                       </div>
@@ -1544,8 +1565,8 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                         <GraduationCap size={18} />
                         3. Education History
                       </h4>
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         onClick={addEduItem}
                         className="px-3 py-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 font-semibold text-xs flex items-center gap-1.5 transition-colors border border-purple-500/20"
                       >
@@ -1573,20 +1594,20 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                             <span className="text-xs font-bold text-slate-800 dark:text-slate-200">1. Logo Kampus</span>
                           </div>
                           <div className="flex gap-1.5">
-                            <input 
-                              type="text" 
-                              value={heroForm.logoKampus || ''} 
-                              onChange={(e) => setHeroForm({...heroForm, logoKampus: e.target.value})} 
+                            <input
+                              type="text"
+                              value={heroForm.logoKampus || ''}
+                              onChange={(e) => setHeroForm({ ...heroForm, logoKampus: e.target.value })}
                               placeholder="URL Logo Kampus"
                               className="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white"
                             />
                             <label className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-[11px] flex items-center justify-center cursor-pointer shrink-0 shadow-sm">
                               Upload
-                              <input 
-                                type="file" 
-                                accept="image/*" 
-                                className="hidden" 
-                                onChange={(e) => handleFileUpload(e, 'logoKampus', (url) => setHeroForm({...heroForm, logoKampus: url}))}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => handleFileUpload(e, 'logoKampus', (url) => setHeroForm({ ...heroForm, logoKampus: url }))}
                               />
                             </label>
                           </div>
@@ -1599,20 +1620,20 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                             <span className="text-xs font-bold text-slate-800 dark:text-slate-200">2. Logo Fakultas</span>
                           </div>
                           <div className="flex gap-1.5">
-                            <input 
-                              type="text" 
-                              value={heroForm.logoFakultas || ''} 
-                              onChange={(e) => setHeroForm({...heroForm, logoFakultas: e.target.value})} 
+                            <input
+                              type="text"
+                              value={heroForm.logoFakultas || ''}
+                              onChange={(e) => setHeroForm({ ...heroForm, logoFakultas: e.target.value })}
                               placeholder="URL Logo Fakultas"
                               className="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white"
                             />
                             <label className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-[11px] flex items-center justify-center cursor-pointer shrink-0 shadow-sm">
                               Upload
-                              <input 
-                                type="file" 
-                                accept="image/*" 
-                                className="hidden" 
-                                onChange={(e) => handleFileUpload(e, 'logoFakultas', (url) => setHeroForm({...heroForm, logoFakultas: url}))}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => handleFileUpload(e, 'logoFakultas', (url) => setHeroForm({ ...heroForm, logoFakultas: url }))}
                               />
                             </label>
                           </div>
@@ -1625,20 +1646,20 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                             <span className="text-xs font-bold text-slate-800 dark:text-slate-200">3. Logo SMK</span>
                           </div>
                           <div className="flex gap-1.5">
-                            <input 
-                              type="text" 
-                              value={heroForm.logoSMK || ''} 
-                              onChange={(e) => setHeroForm({...heroForm, logoSMK: e.target.value})} 
+                            <input
+                              type="text"
+                              value={heroForm.logoSMK || ''}
+                              onChange={(e) => setHeroForm({ ...heroForm, logoSMK: e.target.value })}
                               placeholder="URL Logo SMK"
                               className="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white"
                             />
                             <label className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-[11px] flex items-center justify-center cursor-pointer shrink-0 shadow-sm">
                               Upload
-                              <input 
-                                type="file" 
-                                accept="image/*" 
-                                className="hidden" 
-                                onChange={(e) => handleFileUpload(e, 'logoSMK', (url) => setHeroForm({...heroForm, logoSMK: url}))}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => handleFileUpload(e, 'logoSMK', (url) => setHeroForm({ ...heroForm, logoSMK: url }))}
                               />
                             </label>
                           </div>
@@ -1651,7 +1672,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                     ) : (
                       (heroForm.education || []).map((edu, idx) => (
                         <div key={idx} className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-3 relative group">
-                          <button 
+                          <button
                             type="button"
                             onClick={() => removeEduItem(idx)}
                             className="absolute top-3 right-3 p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-500/10 transition-colors"
@@ -1663,7 +1684,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pr-8">
                             <div className="sm:col-span-2">
                               <label className="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Degree / Major</label>
-                              <input 
+                              <input
                                 type="text"
                                 value={edu.degree || ''}
                                 onChange={(e) => updateEduItem(idx, 'degree', e.target.value)}
@@ -1673,7 +1694,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                             </div>
                             <div>
                               <label className="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Period</label>
-                              <input 
+                              <input
                                 type="text"
                                 value={edu.period || ''}
                                 onChange={(e) => updateEduItem(idx, 'period', e.target.value)}
@@ -1685,7 +1706,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
                           <div>
                             <label className="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Institution / University</label>
-                            <input 
+                            <input
                               type="text"
                               value={edu.institution || ''}
                               onChange={(e) => updateEduItem(idx, 'institution', e.target.value)}
@@ -1696,7 +1717,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
                           <div>
                             <label className="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Description / Achievements</label>
-                            <textarea 
+                            <textarea
                               value={edu.description || ''}
                               onChange={(e) => updateEduItem(idx, 'description', e.target.value)}
                               rows="2"
@@ -1710,8 +1731,8 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                   </div>
 
                   <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="w-full sm:w-auto px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                     >
                       <Save size={16} />
@@ -1727,7 +1748,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                ======================================================== */}
             {activeTab === 'projects' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                
+
                 {/* Save/Edit form */}
                 <div className="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">
@@ -1736,20 +1757,20 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                   <form onSubmit={saveProject} className="space-y-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Project Title</label>
-                      <input 
-                        type="text" 
-                        value={projectForm.title} 
-                        onChange={(e) => setProjectForm({...projectForm, title: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="My Awesome App" 
+                      <input
+                        type="text"
+                        value={projectForm.title}
+                        onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="My Awesome App"
                         required
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Category</label>
-                      <select 
-                        value={projectForm.category} 
-                        onChange={(e) => setProjectForm({...projectForm, category: e.target.value})}
+                      <select
+                        value={projectForm.category}
+                        onChange={(e) => setProjectForm({ ...projectForm, category: e.target.value })}
                         className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
                       >
                         <option value="Web">Web Project</option>
@@ -1759,42 +1780,42 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Description</label>
-                      <textarea 
-                        value={projectForm.description} 
-                        onChange={(e) => setProjectForm({...projectForm, description: e.target.value})}
-                        rows="3" 
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
+                      <textarea
+                        value={projectForm.description}
+                        onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
+                        rows="3"
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none"
                         placeholder="Write short description..."
                         required
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Tech Stack (comma separated)</label>
-                      <input 
-                        type="text" 
-                        value={projectForm.tech_stack} 
-                        onChange={(e) => setProjectForm({...projectForm, tech_stack: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="React, Tailwind, Supabase" 
+                      <input
+                        type="text"
+                        value={projectForm.tech_stack}
+                        onChange={(e) => setProjectForm({ ...projectForm, tech_stack: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="React, Tailwind, Supabase"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Main Cover Image</label>
                       <div className="flex gap-2">
-                        <input 
-                          type="text" 
-                          value={projectForm.image_url} 
-                          onChange={(e) => setProjectForm({...projectForm, image_url: e.target.value})}
-                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                          placeholder="Image URL" 
+                        <input
+                          type="text"
+                          value={projectForm.image_url}
+                          onChange={(e) => setProjectForm({ ...projectForm, image_url: e.target.value })}
+                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                          placeholder="Image URL"
                         />
                         <label className="px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors border border-slate-300 dark:border-slate-700">
                           Upload
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            className="hidden" 
-                            onChange={(e) => handleFileUpload(e, 'project', (url) => setProjectForm({...projectForm, image_url: url}))}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleFileUpload(e, 'project', (url) => setProjectForm({ ...projectForm, image_url: url }))}
                           />
                         </label>
                       </div>
@@ -1809,10 +1830,10 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                         <label className="w-full px-4 py-2.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors border border-blue-500/20 shadow-sm">
                           <Plus size={15} />
                           Upload Foto Dokumentasi Tambahan
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            className="hidden" 
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
                             onChange={(e) => handleFileUpload(e, 'gallery', (url) => {
                               setProjectForm(prev => ({
                                 ...prev,
@@ -1853,22 +1874,22 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">GitHub URL</label>
-                      <input 
-                        type="url" 
-                        value={projectForm.github_link} 
-                        onChange={(e) => setProjectForm({...projectForm, github_link: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="https://github.com/..." 
+                      <input
+                        type="url"
+                        value={projectForm.github_link}
+                        onChange={(e) => setProjectForm({ ...projectForm, github_link: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="https://github.com/..."
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Live Demo URL</label>
-                      <input 
-                        type="url" 
-                        value={projectForm.live_link} 
-                        onChange={(e) => setProjectForm({...projectForm, live_link: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="https://example.com" 
+                      <input
+                        type="url"
+                        value={projectForm.live_link}
+                        onChange={(e) => setProjectForm({ ...projectForm, live_link: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="https://example.com"
                       />
                     </div>
                     <div className="flex gap-2 pt-2">
@@ -1932,7 +1953,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                ======================================================== */}
             {activeTab === 'experiences' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                
+
                 <div className="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">
                     {editingId ? 'Edit Experience' : 'Add Experience'}
@@ -1940,31 +1961,31 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                   <form onSubmit={saveExperience} className="space-y-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Role Title</label>
-                      <input 
-                        type="text" 
-                        value={expForm.role} 
-                        onChange={(e) => setExpForm({...expForm, role: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="Research Assistant" 
+                      <input
+                        type="text"
+                        value={expForm.role}
+                        onChange={(e) => setExpForm({ ...expForm, role: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="Research Assistant"
                         required
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Company / Org Name</label>
-                      <input 
-                        type="text" 
-                        value={expForm.company} 
-                        onChange={(e) => setExpForm({...expForm, company: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="Lab CV / Tech Co." 
+                      <input
+                        type="text"
+                        value={expForm.company}
+                        onChange={(e) => setExpForm({ ...expForm, company: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="Lab CV / Tech Co."
                         required
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Experience Type</label>
-                      <select 
-                        value={expForm.type} 
-                        onChange={(e) => setExpForm({...expForm, type: e.target.value})}
+                      <select
+                        value={expForm.type}
+                        onChange={(e) => setExpForm({ ...expForm, type: e.target.value })}
                         className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
                       >
                         <option value="Internship">Internship</option>
@@ -1991,12 +2012,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Description</label>
-                      <textarea 
-                        value={expForm.description} 
-                        onChange={(e) => setExpForm({...expForm, description: e.target.value})}
-                        rows="3" 
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none" 
-                        placeholder="Write key achievements, tasks..." 
+                      <textarea
+                        value={expForm.description}
+                        onChange={(e) => setExpForm({ ...expForm, description: e.target.value })}
+                        rows="3"
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm resize-none"
+                        placeholder="Write key achievements, tasks..."
                       />
                     </div>
                     <div className="flex gap-2 pt-2">
@@ -2058,7 +2079,7 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                ======================================================== */}
             {activeTab === 'certificates' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                
+
                 <div className="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">
                     {editingId ? 'Edit Certificate' : 'Add Certificate'}
@@ -2066,32 +2087,32 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                   <form onSubmit={saveCertificate} className="space-y-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Judul Sertifikat / Pelatihan</label>
-                      <input 
-                        type="text" 
-                        value={certForm.title} 
-                        onChange={(e) => setCertForm({...certForm, title: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="Deep Learning Specialization" 
+                      <input
+                        type="text"
+                        value={certForm.title}
+                        onChange={(e) => setCertForm({ ...certForm, title: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="Deep Learning Specialization"
                         required
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Penerbit / Penyelenggara (Issuer)</label>
-                      <input 
-                        type="text" 
-                        value={certForm.issuer} 
-                        onChange={(e) => setCertForm({...certForm, issuer: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="Coursera / Google / BNSP" 
+                      <input
+                        type="text"
+                        value={certForm.issuer}
+                        onChange={(e) => setCertForm({ ...certForm, issuer: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="Coursera / Google / BNSP"
                         required
                       />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Tipe Sertifikat</label>
-                        <select 
-                          value={certForm.type} 
-                          onChange={(e) => setCertForm({...certForm, type: e.target.value})}
+                        <select
+                          value={certForm.type}
+                          onChange={(e) => setCertForm({ ...certForm, type: e.target.value })}
                           className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
                         >
                           <option value="Sertifikasi Profesi">Sertifikasi Profesi</option>
@@ -2111,20 +2132,20 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Logo Penerbit / Issuer Logo</label>
                       <div className="flex gap-2">
-                        <input 
-                          type="text" 
-                          value={certForm.issuer_logo} 
-                          onChange={(e) => setCertForm({...certForm, issuer_logo: e.target.value})}
-                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                          placeholder="URL Logo (Opsional)" 
+                        <input
+                          type="text"
+                          value={certForm.issuer_logo}
+                          onChange={(e) => setCertForm({ ...certForm, issuer_logo: e.target.value })}
+                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                          placeholder="URL Logo (Opsional)"
                         />
                         <label className="px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors border border-slate-300 dark:border-slate-700">
                           Upload Logo
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            className="hidden" 
-                            onChange={(e) => handleFileUpload(e, 'logo', (url) => setCertForm({...certForm, issuer_logo: url}))}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleFileUpload(e, 'logo', (url) => setCertForm({ ...certForm, issuer_logo: url }))}
                           />
                         </label>
                       </div>
@@ -2134,20 +2155,20 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Foto / Pratinjau Gambar Sertifikat</label>
                       <div className="flex gap-2">
-                        <input 
-                          type="text" 
-                          value={certForm.image_url} 
-                          onChange={(e) => setCertForm({...certForm, image_url: e.target.value})}
-                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                          placeholder="URL Gambar Sertifikat" 
+                        <input
+                          type="text"
+                          value={certForm.image_url}
+                          onChange={(e) => setCertForm({ ...certForm, image_url: e.target.value })}
+                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                          placeholder="URL Gambar Sertifikat"
                         />
                         <label className="px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors border border-slate-300 dark:border-slate-700">
                           Upload Foto
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            className="hidden" 
-                            onChange={(e) => handleFileUpload(e, 'certificate_img', (url) => setCertForm({...certForm, image_url: url}))}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleFileUpload(e, 'certificate_img', (url) => setCertForm({ ...certForm, image_url: url }))}
                           />
                         </label>
                       </div>
@@ -2157,20 +2178,20 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">File PDF Sertifikat (Untuk Fitur "Lihat PDF")</label>
                       <div className="flex gap-2">
-                        <input 
-                          type="text" 
-                          value={certForm.pdf_url} 
-                          onChange={(e) => setCertForm({...certForm, pdf_url: e.target.value})}
-                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                          placeholder="URL File PDF (Opsional)" 
+                        <input
+                          type="text"
+                          value={certForm.pdf_url}
+                          onChange={(e) => setCertForm({ ...certForm, pdf_url: e.target.value })}
+                          className="flex-1 px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                          placeholder="URL File PDF (Opsional)"
                         />
                         <label className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors shadow-sm">
                           Upload PDF
-                          <input 
-                            type="file" 
-                            accept="application/pdf,image/*" 
-                            className="hidden" 
-                            onChange={(e) => handleFileUpload(e, 'cert_pdf', (url) => setCertForm({...certForm, pdf_url: url}))}
+                          <input
+                            type="file"
+                            accept="application/pdf,image/*"
+                            className="hidden"
+                            onChange={(e) => handleFileUpload(e, 'cert_pdf', (url) => setCertForm({ ...certForm, pdf_url: url }))}
                           />
                         </label>
                       </div>
@@ -2178,12 +2199,12 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Link Verifikasi Kredensial (URL Web)</label>
-                      <input 
-                        type="url" 
-                        value={certForm.credential_url} 
-                        onChange={(e) => setCertForm({...certForm, credential_url: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm" 
-                        placeholder="https://coursera.org/verify/..." 
+                      <input
+                        type="url"
+                        value={certForm.credential_url}
+                        onChange={(e) => setCertForm({ ...certForm, credential_url: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 focus:border-blue-500 focus:outline-none text-slate-900 dark:text-white text-sm"
+                        placeholder="https://coursera.org/verify/..."
                       />
                     </div>
                     <div className="flex gap-2 pt-2">
@@ -2226,18 +2247,18 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
                           </td>
                           <td className="p-4 text-right">
                             <div className="flex justify-end gap-2">
-                              <button onClick={() => { 
-                                setEditingId(c.id); 
-                                setCertForm({ 
-                                  title: c.title || '', 
-                                  issuer: c.issuer || c.organizer || '', 
+                              <button onClick={() => {
+                                setEditingId(c.id);
+                                setCertForm({
+                                  title: c.title || '',
+                                  issuer: c.issuer || c.organizer || '',
                                   type: c.type || 'Sertifikasi Profesi',
-                                  date: c.date || '', 
+                                  date: c.date || '',
                                   issuer_logo: c.issuer_logo || '',
-                                  image_url: c.image_url || '', 
+                                  image_url: c.image_url || '',
                                   pdf_url: c.pdf_url || '',
-                                  credential_url: c.credential_url || '' 
-                                }); 
+                                  credential_url: c.credential_url || ''
+                                });
                               }} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" title="Edit">
                                 <Edit2 size={14} />
                               </button>
@@ -2278,10 +2299,10 @@ const AdminDashboard = ({ session, darkMode, setDarkMode }) => {
 
                     <label className="w-full sm:w-auto px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors shadow-lg shadow-blue-500/10">
                       Upload PDF
-                      <input 
-                        type="file" 
-                        accept=".pdf" 
-                        className="hidden" 
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        className="hidden"
                         onChange={(e) => handleFileUpload(e, 'cv', (url) => setCvUrl(url))}
                       />
                     </label>
