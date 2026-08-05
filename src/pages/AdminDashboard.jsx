@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   FolderGit2, Award, Briefcase, FileUp, LogOut, 
-  Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle2, Sun, Moon, User, Image, Sparkles, GraduationCap, Languages, Menu
+  Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle2, Sun, Moon, User, Image, Sparkles, GraduationCap, Languages, Menu, Calendar
 } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { mockProjects, mockSkills, mockExperiences, mockCertificates, profileInfo } from '../data/mockData'
